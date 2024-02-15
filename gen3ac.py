@@ -12,6 +12,9 @@ class Generator(c_ast.NodeVisitor):
         self.unaryVar = [] #unary操作推进去的var name
         self.ids = []  #ID 的name
         self.constants = []  #常数的value
+        self.labelId=0 #label 的 id
+        self.labels=[] #label列表，都要消耗掉
+        self.cond_labels=[] #cond产生的label
         # -------------------------
         self.values = []
         # full of IDs
@@ -49,6 +52,12 @@ class Generator(c_ast.NodeVisitor):
         temp_name = f"temp{self.tempId}"
         self.tempId += 1
         return temp_name
+    def generate_label(self):
+        label_name = f"label{self.labelId}"
+        self.labelId += 1
+        # print(f"goto {label_name};")
+        # self.labels.append(label_name)
+        return label_name
     def visit_FileAST(self, node):
         # out = []
         # for i in node:
@@ -250,6 +259,28 @@ class Generator(c_ast.NodeVisitor):
     def visit_Constant(self, node):
         # 打印Constant节点的类型和值
         self.constants.append(node.value)
+
+
+
+    def visit_If(self, node):
+        label0 = self.generate_label()
+        label1 = self.generate_label()
+        label2 = self.generate_label()
+        if(isinstance(node.cond,BinaryOp)):
+            self.visit(node.cond)
+            resName=self.temps.pop()
+            print(f"if ({resName})  goto {label0};")
+            print(f"goto {label1};")
+        if(node.iftrue):
+            print(f"{label0}:")
+            self.visit(node.iftrue)
+            print(f"goto {label2};")
+        if(node.iffalse):
+            print(f"{label1}:")
+            self.visit(node.iffalse)
+            print(f"{label2}:")
+
+
 def main():
     parser = argparse.ArgumentParser(description='Process some files.')
 
