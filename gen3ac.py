@@ -61,7 +61,7 @@ class Generator(c_ast.NodeVisitor):
         # 然后找到并访问Compound节点
         if isinstance(node.body, c_ast.Compound):
             self.visit(node.body) # visit compound
-        print(self.braces.pop())
+        print("}")
         # out = []
         # for i in node.decl.type.args.params:
         #     self.visit(i)
@@ -82,7 +82,6 @@ class Generator(c_ast.NodeVisitor):
         print(func_decl_code)
         print("{")
 
-        self.braces.append("}")
 
     def visit_Compound(self, node):
         # 在这里处理Compound节点
@@ -115,48 +114,53 @@ class Generator(c_ast.NodeVisitor):
         #     self.visit(node.lvalue)
         #     # lvalue_str = f'{self.ls.pop()}'
         # else:
-        left = node.lvalue.name  # 假设左值是一个简单的标识符
-
-        # 处理右值
-        if isinstance(node.rvalue, BinaryOp):
-
-            right = self.visit(node.rvalue)
-        elif isinstance(node.rvalue, UnaryOp):
-            self.visit(node.rvalue)
-            right = self.unaryVar.pop()
-        elif isinstance(node.rvalue, ArrayRef):
-            self.visit(node.rvalue)
-            print("todo")
-            # right =
-        else:
-            right = node.rvalue.value  # 假设右值是一个简单的常量
+        left = self.visit(node.lvalue)  # 假设左值是一个简单的标识符
+        right = self.visit(node.rvalue)
 
         # 打印三地址代码
         print(f"{left} = {right};")
+    def visit_ExprList(self, node):
+        name_list=[]
+        if node.exprs:
+            for expr in node.exprs:
+                name_list.append(expr.value)
+        return name_list
+    def visit_FuncCall(self,node):
+        name=self.visit(node.name)
+        func_call_str = f"{name}()"
+
+        # 检查是否存在参数
+        if node.args:
+            # 访问参数节点并获取包含所有参数的字符串列表
+            args = self.visit(node.args)
+
+            # 将参数列表转换为字符串，参数之间用逗号和空格分隔
+            args_str = ', '.join(args)
+
+            # 使用参数字符串更新func_call_str
+            func_call_str = f"{name}({args_str})"
+
+        # 返回完整的函数调用字符串
+        temp=self.generate_temp()
+        print(f"{temp}={func_call_str}")
+        return temp
+
+
+    def visit_TypeDecl(self,node):
+        name = node.declname
+        type_list = node.type.names
+        print(f"{' '.join(type_list)} {name}")
+        return name
 
     def visit_Decl(self, node):
-        name=""
-        # 检查声明的类型
-        if isinstance(node.type, c_ast.TypeDecl):
-            name=node.type.declname
-            type_list=node.type.type.names
-            print(f"{' '.join(type_list)} {name}")
-        elif isinstance(node.type, c_ast.ArrayDecl) or isinstance(node.type, c_ast.PtrDecl) :
-            print("todo ArrayDecl PtrDecl")
-            return
-        elif isinstance(node.type, c_ast.FuncDecl):
-            self.visit(node.type)
-            return
+        name="unknown 34254"
+        if node.type:
+            name=self.visit(node.type)
+        if node.init:
+            right=self.visit(node.init)
+            print(f"{name} = {right};")
+        # print(f"{type}")
 
-        # 检查并处理初始化表达式
-        if isinstance(node.init, (BinaryOp, UnaryOp, ArrayRef)):
-            self.visit(node.init)  # 访问初始化表达式以处理内部结构
-            init_str = f'temp_var'  # 假设这是之前处理表达式时生成的临时变量名称
-        elif isinstance(node.init, Constant):
-            value = node.init.value  # 常量初始化
-            print(f"{name} = {value}")
-        else:
-            init_str = ''
 
         # # 生成并打印3AC
         # if init_str:  # 如果存在初始化表达式
