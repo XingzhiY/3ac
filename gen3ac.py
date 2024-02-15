@@ -8,7 +8,7 @@ class Generator(c_ast.NodeVisitor):
     def __init__(self):
         self.braces = [] #大括号
         self.tempId = 0 #临时var的计数器
-        self.temps = [] #临时var
+        self.binaryVar = [] #binary临时var
         self.unaryVar = [] #unary操作推进去的var name
         self.ids = []  #ID 的name
         self.constants = []  #常数的value
@@ -16,38 +16,17 @@ class Generator(c_ast.NodeVisitor):
         self.labels=[] #label列表，都要消耗掉
         self.cond_labels=[] #cond产生的label
         # -------------------------
-        self.values = []
-        # full of IDs
-        self.ls = []
-        # var name to type array {'a': ['int'], 'b': ['int'], 'c': ['int']}
-        self.dict = dict()
-        self.count = 0
-        self.unary = []
-        self.una = []
-        self.blabel = []
-        self.cont = []
-        self.brea = []
-        # self.vals = dict()
+
 
     def reset(self):
         self.braces = [] #大括号
         self.tempId = 0 #临时var的计数器
-        self.temps = [] #临时var
+        self.binaryVar = [] #临时var
         self.unaryVar = [] #unary操作推进去的var name
         self.ids = []  #ID 的name
         self.constants = []  #常数的value
         # -------------------------
-        self.values = []
-        # full of IDs
-        self.ls = []
-        # var name to type array {'a': ['int'], 'b': ['int'], 'c': ['int']}
-        self.dict = dict()
-        self.count = 0
-        self.unary = []
-        self.una = []
-        self.blabel = []
-        self.cont = []
-        self.brea = []
+
     def generate_temp(self):
         temp_name = f"temp{self.tempId}"
         self.tempId += 1
@@ -132,27 +111,28 @@ class Generator(c_ast.NodeVisitor):
         # # 打印赋值语句
         # print(f"{variable_name} = {value};")
 
-        if isinstance(node.lvalue, ArrayRef): # 假设左值是一个列表
-            self.visit(node.lvalue)
-            lvalue_str = f'{self.ls.pop()}'
-        else:
-            lvalue_str = node.lvalue.name  # 假设左值是一个简单的标识符
+        # if isinstance(node.lvalue, ArrayRef): # 假设左值是一个列表
+        #     self.visit(node.lvalue)
+        #     # lvalue_str = f'{self.ls.pop()}'
+        # else:
+        left = node.lvalue.name  # 假设左值是一个简单的标识符
 
         # 处理右值
         if isinstance(node.rvalue, BinaryOp):
             self.visit(node.rvalue)
-            rvalue_str = f'temp{len(self.ls)}'
+            right = self.binaryVar.pop()
         elif isinstance(node.rvalue, UnaryOp):
             self.visit(node.rvalue)
-            rvalue_str = f'temp{len(self.una)}'
+            right = self.unaryVar.pop()
         elif isinstance(node.rvalue, ArrayRef):
             self.visit(node.rvalue)
-            rvalue_str = f'temp{len(self.ls)}'
+            print("todo")
+            # right =
         else:
-            rvalue_str = node.rvalue.value  # 假设右值是一个简单的常量
+            right = node.rvalue.value  # 假设右值是一个简单的常量
 
         # 打印三地址代码
-        print(f"{lvalue_str} = {rvalue_str};")
+        print(f"{left} = {right};")
 
     def visit_Decl(self, node):
         name=""
@@ -221,7 +201,7 @@ class Generator(c_ast.NodeVisitor):
         # 处理左侧表达式
         if isinstance(node.left, BinaryOp):
             self.visit(node.left)
-            left_name = self.temps.pop()
+            left_name = self.binaryVar.pop()
         elif isinstance(node.left, UnaryOp):
             self.visit(node.left)
             left_name = self.unaryVar.pop()
@@ -238,7 +218,7 @@ class Generator(c_ast.NodeVisitor):
         # 处理右侧表达式
         if isinstance(node.right, BinaryOp):
             self.visit(node.right)
-            right_name = self.temps.pop()
+            right_name = self.binaryVar.pop()
         elif isinstance(node.right, UnaryOp):
             self.visit(node.right)
             right_name = self.unaryVar.pop()
@@ -254,7 +234,7 @@ class Generator(c_ast.NodeVisitor):
 
         # 打印二元操作的3AC
         result_name = self.generate_temp()
-        self.temps.append(result_name)
+        self.binaryVar.append(result_name)
         print(f"{result_name} = {left_name} {node.op} {right_name};")
 
     def visit_ID(self, node):
@@ -272,7 +252,7 @@ class Generator(c_ast.NodeVisitor):
         label2 = self.generate_label()
         if(isinstance(node.cond,BinaryOp)):
             self.visit(node.cond)
-            resName=self.temps.pop()
+            resName=self.binaryVar.pop()
             print(f"if ({resName})  goto {label0};")
             print(f"goto {label1};")
         if(node.iftrue):
@@ -319,6 +299,33 @@ class Generator(c_ast.NodeVisitor):
                 for s in item.stmts:
                     self.visit(s)
         print(f"{label_end}:")
+
+    def visit_For(self,node):
+        #init
+        self.visit(node.init)
+        label0 = self.generate_label()
+        label1 = self.generate_label()
+        label2 = self.generate_label()
+        print(f"{label0}:")
+        #cond
+        if(isinstance(node.cond,BinaryOp)):
+            self.visit(node.cond)
+            res=self.binaryVar.pop()
+            print(f"if ({res})")
+        print(f"goto {label2};")
+        print(f"goto {label1};")
+        print(f"{label2}:")
+        #stmt
+        self.visit(node.stmt)
+        #next
+        # if(isinstance(node.next,UnaryOp)):
+
+
+
+
+
+
+
 
 
 
