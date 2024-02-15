@@ -221,16 +221,26 @@ class Generator(c_ast.NodeVisitor):
         return node.value
 
 
-
+    def visit_While(self,node):
+        label0 = self.generate_label()
+        label1 = self.generate_label()
+        label2 = self.generate_label()
+        print(f"{label0}:")
+        resName= self.visit(node.cond)
+        print(f"if ({resName})  goto {label2};")
+        print(f"goto {label1};")
+        print(f"{label2}:")
+        self.visit(node.stmt)
+        print(f"goto {label0};")
+        print(f"{label1}:")
     def visit_If(self, node):
         label0 = self.generate_label()
         label1 = self.generate_label()
         label2 = self.generate_label()
-        if(isinstance(node.cond,BinaryOp)):
-            self.visit(node.cond)
-            resName=self.binaryVar.pop()
-            print(f"if ({resName})  goto {label0};")
-            print(f"goto {label1};")
+
+        resName=self.visit(node.cond)
+        print(f"if ({resName})  goto {label0};")
+        print(f"goto {label1};")
         if(node.iftrue):
             print(f"{label0}:")
             self.visit(node.iftrue)
