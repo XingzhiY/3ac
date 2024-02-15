@@ -16,6 +16,8 @@ class Generator(c_ast.NodeVisitor):
         self.labels=[] #label列表，都要消耗掉
         self.cond_labels=[] #cond产生的label
         # -------------------------
+        self.break_labels=[]
+        self.continue_labels=[]
 
 
     def reset(self):
@@ -26,10 +28,30 @@ class Generator(c_ast.NodeVisitor):
         self.ids = []  #ID 的name
         self.constants = []  #常数的value
         # -------------------------
+        self.break_labels = []
+        self.continue_labels = []
+    def enter_switch(self,label):
+        self.break_labels.append(label)
 
+    def quit_switch(self):
+        self.break_labels.pop()
+    def get_switch(self):
+        return self.break_labels[-1]
+    def enter_loop(self,continue_label,break_label):
+        self.break_labels.append(break_label)
+        self.continue_labels.append(continue_label)
+
+    def quit_loop(self):
+        self.break_labels.pop()
+        self.continue_labels.pop()
+    def get_continue(self):
+        return self.continue_labels[-1]
+    def get_break(self):
+        return self.break_labels[-1]
     def generate_temp(self):
         temp_name = f"temp{self.tempId}"
         self.tempId += 1
+        print(f"int {temp_name};")
         return temp_name
     def generate_label(self):
         label_name = f"label{self.labelId}"
@@ -225,35 +247,38 @@ class Generator(c_ast.NodeVisitor):
         # 打印Constant节点的类型和值
         return node.value
     def visit_DoWhile(self,node):
-        label0 = self.generate_label()
-        label1 = self.generate_label()
+        start_label = self.generate_label()
+        end_label = self.generate_label()
         label2 = self.generate_label()
-
+        self.enter_loop(start_label,end_label)
         print(f"goto {label2};")
-        print(f"{label0}:")
+        print(f"{start_label}:")
 
         resName = self.visit(node.cond)
         print(f"if ({resName})  goto {label2};")
-        print(f"goto {label1};")
+        print(f"goto {end_label};")
 
         print(f"{label2}:")
         self.visit(node.stmt)
 
-        print(f"goto {label0};")
-        print(f"{label1}:")
+        print(f"goto {start_label};")
+        print(f"{end_label}:")
+        self.quit_loop()
 
     def visit_While(self,node):
-        label0 = self.generate_label()
-        label1 = self.generate_label()
+        start_label = self.generate_label()
+        end_label = self.generate_label()
         label2 = self.generate_label()
-        print(f"{label0}:")
+        self.enter_loop(start_label,end_label)
+        print(f"{start_label}:")
         resName= self.visit(node.cond)
         print(f"if ({resName})  goto {label2};")
-        print(f"goto {label1};")
+        print(f"goto {end_label};")
         print(f"{label2}:")
         self.visit(node.stmt)
-        print(f"goto {label0};")
-        print(f"{label1}:")
+        print(f"goto {start_label};")
+        print(f"{end_label}:")
+        self.quit_loop()
     def visit_If(self, node):
         label0 = self.generate_label()
         label1 = self.generate_label()
@@ -272,13 +297,14 @@ class Generator(c_ast.NodeVisitor):
             print(f"{label2}:")
     def visit_Switch(self,node):
         #拿到 case 的对象 i
-        self.visit(node.cond)
-        name = self.ids.pop()
+        ids=self.visit(node.cond)
+        name = ids
         # 拿到 case 的数量
         num_case=len(node.stmt.block_items)
         # print(num_case)
         # print(name)
         label_end=self.generate_label()
+        self.enter_switch(label_end)
         # 对每一个 case
         case_labels=[]
         for i in range(num_case):
@@ -288,8 +314,8 @@ class Generator(c_ast.NodeVisitor):
 
             if (isinstance(item,Case)):
                 # print("yes")
-                self.visit(item.expr)
-                case=self.constants.pop()
+                temp = self.visit(item.expr)
+                case=temp
                 print(f"if ({name} == {case})")
                 print(f"goto {case_labels[i]};")
             # if (isinstance(item,Break)):
@@ -297,38 +323,44 @@ class Generator(c_ast.NodeVisitor):
         for i in range(num_case):
             item=node.stmt.block_items[i]
             print(f"{case_labels[i]}:")
-            if (isinstance(item, Case)):
-                for s in item.stmts:
-                    self.visit(s)
-                    if(isinstance(s,Break)):
-                        print(f"goto {label_end};")
-            if(isinstance(item, Default)):
-                for s in item.stmts:
-                    self.visit(s)
+            # if (isinstance(item, Case)):
+            #     for s in item.stmts:
+            #         self.visit(s)
+            #         # if(isinstance(s,Break)):
+            #         #     print(f"goto {label_end};")-------------------------------??对不对？
+            # if(isinstance(item, Default)):
+            #     for s in item.stmts:
+            #         self.visit(s)
+            for s in item.stmts:
+                self.visit(s)
         print(f"{label_end}:")
+        self.quit_switch()
 
     def visit_For(self,node):
         #init
         self.visit(node.init)
-        label0 = self.generate_label()
-        label1 = self.generate_label()
+        start_label = self.generate_label()
+        end_label = self.generate_label()
         label2 = self.generate_label()
-        print(f"{label0}:")
+        print(f"{start_label}:")
+        self.enter_loop(start_label,end_label)
         #cond
-        if(isinstance(node.cond,BinaryOp)):
+        # if(isinstance(node.cond,BinaryOp)):
 
-            res=self.visit(node.cond)
-            print(f"if ({res})")
+        res=self.visit(node.cond)
+        print(f"if ({res})")
+
         print(f"goto {label2};")
-        print(f"goto {label1};")
+        print(f"goto {end_label};")
         print(f"{label2}:")
         #stmt
         self.visit(node.stmt)
         #next
         self.visit(node.next)
         #end
-        print(f"goto {label0};")
-        print(f"{label1}:")
+        print(f"goto {start_label};")
+        print(f"{end_label}:")
+        self.quit_loop()
 
     def visit_ArrayRef(self,node):
         name=self.visit(node.name)
@@ -340,13 +372,16 @@ class Generator(c_ast.NodeVisitor):
         return temp2
         # print (name)
         # print(num)
+    def visit_Break(self,node):
+        label=self.get_break()
+        print(f"goto {label};")
 
-
-
-
-
-
-
+    def visit_Continue(self, node):
+        label = self.get_continue()
+        print(f"goto {label};")
+    def visit_Return(self, node):
+        res=self.visit(node.expr)
+        print(f"return {res};")
 
 
 def main():
