@@ -330,7 +330,16 @@ class Generator(c_ast.NodeVisitor):
         print(f"goto {label0};")
         print(f"{label1}:")
 
-
+    def visit_ArrayRef(self,node):
+        name=self.visit(node.name)
+        num=self.visit(node.subscript)
+        temp=self.generate_temp()
+        print(f"{temp} = {name} + {num}")
+        temp2 = self.generate_temp()
+        print(f"{temp2} = *{temp}")
+        return temp2
+        # print (name)
+        # print(num)
 
 
 
