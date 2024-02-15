@@ -18,6 +18,8 @@ class Generator(c_ast.NodeVisitor):
         # -------------------------
         self.break_labels=[]
         self.continue_labels=[]
+        self.name_list=[]
+        self.temp_list=[]
 
 
     def reset(self):
@@ -71,7 +73,7 @@ class Generator(c_ast.NodeVisitor):
     def visit_FuncDef(self, node):
         # 首先处理函数定义的其他部分，比如函数声明等
         # ...
-        self.visit(node.decl)
+        # self.visit(node.decl)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # 然后找到并访问Compound节点
         if isinstance(node.body, c_ast.Compound):
             self.visit(node.body) # visit compound
@@ -94,7 +96,9 @@ class Generator(c_ast.NodeVisitor):
     def visit_Assignment(self, node):
 
         left = self.visit(node.lvalue)  # 假设左值是一个简单的标识符
+        left=self.name_list.pop()
         right = self.visit(node.rvalue)
+        right=self.name_list.pop()
 
         # 打印三地址代码
         print(f"{left} = {right};")
@@ -103,16 +107,20 @@ class Generator(c_ast.NodeVisitor):
         if node.exprs:
             for expr in node.exprs:
                 value=self.visit(expr)
+                value=self.name_list.pop()
                 name_list.append(value)
-        return name_list
+        # return name_list
+        self.name_list.append(name_list)
     def visit_FuncCall(self,node):
         name=self.visit(node.name)
+        name=self.name_list.pop()
         func_call_str = f"{name}()"
 
         # 检查是否存在参数
         if node.args:
             # 访问参数节点并获取包含所有参数的字符串列表
             args = self.visit(node.args)
+            args = self.name_list.pop()
 
             # 将参数列表转换为字符串，参数之间用逗号和空格分隔
             args_str = ', '.join(args)
@@ -123,21 +131,25 @@ class Generator(c_ast.NodeVisitor):
         # 返回完整的函数调用字符串
         temp=self.generate_temp()
         print(f"{temp}={func_call_str};")
-        return temp
+        # return temp
+        self.name_list.append(temp)
 
 
     def visit_TypeDecl(self,node):
         name = node.declname
         type_list = node.type.names
         print(f"{' '.join(type_list)} {name};")
-        return name
+        # return name
+        self.name_list.append(name)
 
     def visit_Decl(self, node):
         name="unknown 34254"
         if node.type:
             name=self.visit(node.type)
+            name=self.name_list.pop()
         if node.init:
             right=self.visit(node.init)
+            right=self.name_list.pop()
             print(f"{name} = {right};")
         # print(f"{type}")
 
@@ -147,6 +159,7 @@ class Generator(c_ast.NodeVisitor):
         # 获取表达式的字符串表示
         if node.expr:
             name=self.visit(node.expr)
+            name=self.name_list.pop()
         else:
             print("todo 4231")
             return
@@ -172,31 +185,38 @@ class Generator(c_ast.NodeVisitor):
         elif node.op == '&':
             res=self.generate_temp()
             value=self.visit(node.expr)
+            value=self.name_list.pop()
             print(f"{res} = &{value};")
         else:
             print("unkbown unary op")
-        return res
+        # return res
+        self.name_list.append(res)
 
     def visit_BinaryOp(self, node):
         right_name = ""
         left_name = ""
         # 处理左侧表达式
         left_name = self.visit(node.left)
+        left_name=self.name_list.pop()
         # 处理右侧表达式
         right_name = self.visit(node.right)
+        right_name=self.name_list.pop()
 
 
         # 打印二元操作的3AC
         result_name = self.generate_temp()
         print(f"{result_name} = {left_name} {node.op} {right_name};")
-        return result_name
+        # return result_name
+        self.name_list.append(result_name)
 
     def visit_ID(self, node):
-        return node.name
+        # return node.name
+        self.name_list.append(node.name)
 
     def visit_Constant(self, node):
         # 打印Constant节点的类型和值
-        return node.value
+        # return node.value
+        self.name_list.append(node.value)
     def visit_DoWhile(self,node):
         start_label = self.generate_label()
         end_label = self.generate_label()
@@ -206,6 +226,7 @@ class Generator(c_ast.NodeVisitor):
         print(f"{start_label}:1;")
 
         resName = self.visit(node.cond)
+        resName=self.name_list.pop()
         print(f"if ({resName})  goto {label2};")
         print(f"goto {end_label};")
 
@@ -223,6 +244,7 @@ class Generator(c_ast.NodeVisitor):
         self.enter_loop(start_label,end_label)
         print(f"{start_label}:1;")
         resName= self.visit(node.cond)
+        resName=self.name_list.pop()
         print(f"if ({resName})  goto {label2};")
         print(f"goto {end_label};")
         print(f"{label2}:1;")
@@ -236,6 +258,7 @@ class Generator(c_ast.NodeVisitor):
         label2 = self.generate_label()
 
         resName=self.visit(node.cond)
+        resName=self.name_list.pop()
         print(f"if ({resName})  goto {label0};")
         print(f"goto {label1};")
         print(f"{label0}:1;")
@@ -249,8 +272,8 @@ class Generator(c_ast.NodeVisitor):
         print(f"{label2}:1;")
     def visit_Switch(self,node):
         #拿到 case 的对象 i
-        ids=self.visit(node.cond)
-        name = ids
+        name=self.visit(node.cond)
+        name = self.name_list.pop()
         # 拿到 case 的数量
         num_case=len(node.stmt.block_items)
         # print(num_case)
@@ -266,8 +289,8 @@ class Generator(c_ast.NodeVisitor):
 
             if (isinstance(item,Case)):
                 # print("yes")
-                temp = self.visit(item.expr)
-                case=temp
+                case = self.visit(item.expr)
+                case=self.name_list.pop()
                 print(f"if ({name} == {case})")
                 print(f"goto {case_labels[i]};")
             # if (isinstance(item,Break)):
@@ -293,6 +316,7 @@ class Generator(c_ast.NodeVisitor):
         # if(isinstance(node.cond,BinaryOp)):
 
         res=self.visit(node.cond)
+        res=self.name_list.pop()
         print(f"if ({res})")
 
         print(f"goto {label2};")
@@ -309,14 +333,16 @@ class Generator(c_ast.NodeVisitor):
 
     def visit_ArrayRef(self,node):
         name=self.visit(node.name)
+        name=self.name_list.pop()
         num=self.visit(node.subscript)
+        num=self.name_list.pop()
         temp=self.generate_temp()
         print(f"{temp} = {name} + {num};")
         temp2 = self.generate_temp()
         print(f"{temp2} = *{temp};")
-        return temp2
-        # print (name)
-        # print(num)
+        # return temp2
+        self.name_list.append(temp2)
+
     def visit_Break(self,node):
         label=self.get_break()
         print(f"goto {label};")
@@ -326,6 +352,7 @@ class Generator(c_ast.NodeVisitor):
         print(f"goto {label};")
     def visit_Return(self, node):
         res=self.visit(node.expr)
+        res=self.name_list.pop()
         print(f"return {res};")
 
 
