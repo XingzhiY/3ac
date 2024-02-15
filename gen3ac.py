@@ -119,8 +119,8 @@ class Generator(c_ast.NodeVisitor):
 
         # 处理右值
         if isinstance(node.rvalue, BinaryOp):
-            self.visit(node.rvalue)
-            right = self.binaryVar.pop()
+
+            right = self.visit(node.rvalue)
         elif isinstance(node.rvalue, UnaryOp):
             self.visit(node.rvalue)
             right = self.unaryVar.pop()
@@ -165,84 +165,56 @@ class Generator(c_ast.NodeVisitor):
         #     print(f"{type_str} {node.name};")
 
     def visit_UnaryOp(self, node):
+        res="visit_UnaryOp res"
         # 获取表达式的字符串表示
-        if isinstance(node.expr, ID):
-            expr_str = node.expr.name
-        elif isinstance(node.expr, Constant):
-            expr_str = node.expr.value
+        if node.expr:
+            name=self.visit(node.expr)
         else:
-            # 对于更复杂的表达式，生成临时变量
-            self.visit(node.expr)  # 先处理表达式
-            print("unknow expr")
+            print("todo 4231")
+            return
 
-        if node.op in ['p++', '++']:
+        if node.op == '++':
             # 前置自增
-            print(f"{expr_str} = {expr_str} + 1;")
+            print(f"{name} = {name} + 1;")
+            res=name
         elif node.op == 'p++':
             # 如果是后置自增，使用临时变量保存原始值
-            temp = self.generate_temp()
-            print(f"{temp} = {expr_str} - 1;  // {temp} holds the original value of {expr_str}")
-        elif node.op in ['p--', '--']:
+            res = self.generate_temp()
+            print(f"{res} = {name};")
+            print(f"{name} = {name} + 1;")
+        elif node.op in '--':
             # 前置自减
-            print(f"{expr_str} = {expr_str} - 1;")
+            print(f"{name} = {name} - 1;")
+            res=name
         elif node.op == 'p--':
             # 如果是后置自减，使用临时变量保存原始值
-            temp = self.generate_temp()
-            print(f"{temp} = {expr_str} + 1;  // {temp} holds the original value of {expr_str}")
+            res = self.generate_temp()
+            print(f"{res} = {name};")
+            print(f"{name} = {name} - 1;")
         else:
-            # 处理其他一元操作
-            temp = self.generate_temp()
             print("unkbown unary op")
-            # print(f"{temp} = {node.op}{expr_str})
+        return res
 
     def visit_BinaryOp(self, node):
         right_name = ""
         left_name = ""
         # 处理左侧表达式
-        if isinstance(node.left, BinaryOp):
-            self.visit(node.left)
-            left_name = self.binaryVar.pop()
-        elif isinstance(node.left, UnaryOp):
-            self.visit(node.left)
-            left_name = self.unaryVar.pop()
-        elif isinstance(node.left, ArrayRef):
-            print("unknow??好的，好好的ArrayRef ")
-        elif isinstance(node.left,ID):
-            self.visit(node.left)
-            left_name = self.ids.pop()
-        elif isinstance(node.left, Constant):
-            self.visit(node.left)
-            left_name = self.constants.pop()
-
-
+        left_name = self.visit(node.left)
         # 处理右侧表达式
-        if isinstance(node.right, BinaryOp):
-            self.visit(node.right)
-            right_name = self.binaryVar.pop()
-        elif isinstance(node.right, UnaryOp):
-            self.visit(node.right)
-            right_name = self.unaryVar.pop()
-        elif isinstance(node.right, ArrayRef):
-            print("unknow??好的，好好的ArrayRef ")
-        elif isinstance(node.right,ID):
-            self.visit(node.right)
-            right_name = self.ids.pop()
-        elif isinstance(node.right, Constant):
-            self.visit(node.right)
-            right_name = self.constants.pop()
+        right_name = self.visit(node.right)
 
 
         # 打印二元操作的3AC
         result_name = self.generate_temp()
-        self.binaryVar.append(result_name)
         print(f"{result_name} = {left_name} {node.op} {right_name};")
+        return result_name
 
     def visit_ID(self, node):
-        self.ids.append(node.name)
+        return node.name
 
     def visit_Constant(self, node):
         # 打印Constant节点的类型和值
-        self.constants.append(node.value)
+        return node.value
 
 
 
@@ -309,8 +281,8 @@ class Generator(c_ast.NodeVisitor):
         print(f"{label0}:")
         #cond
         if(isinstance(node.cond,BinaryOp)):
-            self.visit(node.cond)
-            res=self.binaryVar.pop()
+
+            res=self.visit(node.cond)
             print(f"if ({res})")
         print(f"goto {label2};")
         print(f"goto {label1};")
@@ -318,7 +290,10 @@ class Generator(c_ast.NodeVisitor):
         #stmt
         self.visit(node.stmt)
         #next
-        # if(isinstance(node.next,UnaryOp)):
+        self.visit(node.next)
+        #end
+        print(f"goto {label0};")
+        print(f"{label1}:")
 
 
 
