@@ -155,14 +155,17 @@ class Generator(c_ast.NodeVisitor):
         print(f"{lvalue_str} = {rvalue_str};")
 
     def visit_Decl(self, node):
+        name=""
         # 检查声明的类型
         if isinstance(node.type, c_ast.TypeDecl):
-            type_str = ' '.join(node.type.type.names)  # 获取类型名称，例如 'int'
+            name=node.type.declname
+            type_list=node.type.type.names
+            print(f"{' '.join(type_list)} {name}")
         elif isinstance(node.type, c_ast.ArrayDecl) or isinstance(node.type, c_ast.PtrDecl) :
             print("todo ArrayDecl PtrDecl")
             return
         elif isinstance(node.type, c_ast.FuncDecl):
-            self.visit_FuncDecl(node.type)
+            self.visit(node.type)
             return
 
         # 检查并处理初始化表达式
@@ -170,15 +173,16 @@ class Generator(c_ast.NodeVisitor):
             self.visit(node.init)  # 访问初始化表达式以处理内部结构
             init_str = f'temp_var'  # 假设这是之前处理表达式时生成的临时变量名称
         elif isinstance(node.init, Constant):
-            init_str = node.init.value  # 常量初始化
+            value = node.init.value  # 常量初始化
+            print(f"{name} = {value}")
         else:
             init_str = ''
 
-        # 生成并打印3AC
-        if init_str:  # 如果存在初始化表达式
-            print(f"{type_str} {node.name} = {init_str};")
-        else:  # 仅声明，无初始化
-            print(f"{type_str} {node.name};")
+        # # 生成并打印3AC
+        # if init_str:  # 如果存在初始化表达式
+        #     print(f"{type_str} {node.name} = {init_str};")
+        # else:  # 仅声明，无初始化
+        #     print(f"{type_str} {node.name};")
 
     def visit_UnaryOp(self, node):
         # 获取表达式的字符串表示
@@ -279,6 +283,44 @@ class Generator(c_ast.NodeVisitor):
             print(f"{label1}:")
             self.visit(node.iffalse)
             print(f"{label2}:")
+    def visit_Switch(self,node):
+        #拿到 case 的对象 i
+        self.visit(node.cond)
+        name = self.ids.pop()
+        # 拿到 case 的数量
+        num_case=len(node.stmt.block_items)
+        # print(num_case)
+        # print(name)
+        label_end=self.generate_label()
+        # 对每一个 case
+        case_labels=[]
+        for i in range(num_case):
+            case_labels.append(self.generate_label())
+        for i in range(num_case):
+            item=node.stmt.block_items[i]
+
+            if (isinstance(item,Case)):
+                # print("yes")
+                self.visit(item.expr)
+                case=self.constants.pop()
+                print(f"if ({name} == {case})")
+                print(f"goto {case_labels[i]};")
+            # if (isinstance(item,Break)):
+            #     print(f"goto {label_end};")
+        for i in range(num_case):
+            item=node.stmt.block_items[i]
+            print(f"{case_labels[i]}:")
+            if (isinstance(item, Case)):
+                for s in item.stmts:
+                    self.visit(s)
+                    if(isinstance(s,Break)):
+                        print(f"goto {label_end};")
+            if(isinstance(item, Default)):
+                for s in item.stmts:
+                    self.visit(s)
+        print(f"{label_end}:")
+
+
 
 
 def main():
