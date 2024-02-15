@@ -56,18 +56,10 @@ class Generator(c_ast.NodeVisitor):
     def generate_label(self):
         label_name = f"label{self.labelId}"
         self.labelId += 1
-        # print(f"goto {label_name};")
-        # self.labels.append(label_name)
+
         return label_name
     def visit_FileAST(self, node):
-        # out = []
-        # for i in node:
-        #     if isinstance(i, Decl):
-        #         out.append(i)
-        #     else:
-        #         out.append(self.visit(i))
-        #     self.__init__()
-        # return FileAST(out)
+
         for i in node:
             if isinstance(i, Decl):
                 # out.append(i)
@@ -84,20 +76,7 @@ class Generator(c_ast.NodeVisitor):
         if isinstance(node.body, c_ast.Compound):
             self.visit(node.body) # visit compound
         print("}")
-        # out = []
-        # for i in node.decl.type.args.params:
-        #     self.visit(i)
-        # out = self.visit(node.body)
-        # decl = []
-        # oth = []
-        # for i in out:
-        #     if isinstance(i, Decl):
-        #         decl.append(i)
-        #     else:
-        #         oth.append(i)
-        # decl.extend(oth)
-        # node = c_ast.FuncDef(node.decl, node.param_decls, Compound(decl))
-        # return node
+
     def visit_FuncDecl(self, node):
         generator = c_generator.CGenerator()
         func_decl_code = generator.visit(node)
@@ -111,31 +90,9 @@ class Generator(c_ast.NodeVisitor):
         for item in node.block_items:
             self.visit(item)
 
-        # out = []
-        # for n in node:
-        #     tmp = self.visit(n)
-        #
-        #     if tmp is not None:
-        #         out.extend(tmp)
-        #     while len(self.unary):
-        #         out.append(self.unary.pop())
-        # node = Compound(out)
-        # return node
-    def visit_Assignment(self, node):
-        # # 获取被赋值的变量名
-        # variable_name = node.lvalue.name
-        #
-        # # 获取赋值表达式的值
-        # # 这里假设值是一个简单的常量，对于更复杂的表达式，可能需要更复杂的处理
-        # value = node.rvalue.value
-        #
-        # # 打印赋值语句
-        # print(f"{variable_name} = {value};")
 
-        # if isinstance(node.lvalue, ArrayRef): # 假设左值是一个列表
-        #     self.visit(node.lvalue)
-        #     # lvalue_str = f'{self.ls.pop()}'
-        # else:
+    def visit_Assignment(self, node):
+
         left = self.visit(node.lvalue)  # 假设左值是一个简单的标识符
         right = self.visit(node.rvalue)
 
@@ -165,14 +122,14 @@ class Generator(c_ast.NodeVisitor):
 
         # 返回完整的函数调用字符串
         temp=self.generate_temp()
-        print(f"{temp}={func_call_str}")
+        print(f"{temp}={func_call_str};")
         return temp
 
 
     def visit_TypeDecl(self,node):
         name = node.declname
         type_list = node.type.names
-        print(f"{' '.join(type_list)} {name}")
+        print(f"{' '.join(type_list)} {name};")
         return name
 
     def visit_Decl(self, node):
@@ -184,12 +141,6 @@ class Generator(c_ast.NodeVisitor):
             print(f"{name} = {right};")
         # print(f"{type}")
 
-
-        # # 生成并打印3AC
-        # if init_str:  # 如果存在初始化表达式
-        #     print(f"{type_str} {node.name} = {init_str};")
-        # else:  # 仅声明，无初始化
-        #     print(f"{type_str} {node.name};")
 
     def visit_UnaryOp(self, node):
         res="visit_UnaryOp res"
@@ -221,7 +172,7 @@ class Generator(c_ast.NodeVisitor):
         elif node.op == '&':
             res=self.generate_temp()
             value=self.visit(node.expr)
-            print(f"{res} = &{value}")
+            print(f"{res} = &{value};")
         else:
             print("unkbown unary op")
         return res
@@ -252,17 +203,17 @@ class Generator(c_ast.NodeVisitor):
         label2 = self.generate_label()
         self.enter_loop(start_label,end_label)
         print(f"goto {label2};")
-        print(f"{start_label}:")
+        print(f"{start_label}:1;")
 
         resName = self.visit(node.cond)
         print(f"if ({resName})  goto {label2};")
         print(f"goto {end_label};")
 
-        print(f"{label2}:")
+        print(f"{label2}:1;")
         self.visit(node.stmt)
 
         print(f"goto {start_label};")
-        print(f"{end_label}:")
+        print(f"{end_label}:1;")
         self.quit_loop()
 
     def visit_While(self,node):
@@ -270,14 +221,14 @@ class Generator(c_ast.NodeVisitor):
         end_label = self.generate_label()
         label2 = self.generate_label()
         self.enter_loop(start_label,end_label)
-        print(f"{start_label}:")
+        print(f"{start_label}:1;")
         resName= self.visit(node.cond)
         print(f"if ({resName})  goto {label2};")
         print(f"goto {end_label};")
-        print(f"{label2}:")
+        print(f"{label2}:1;")
         self.visit(node.stmt)
         print(f"goto {start_label};")
-        print(f"{end_label}:")
+        print(f"{end_label}:1;")
         self.quit_loop()
     def visit_If(self, node):
         label0 = self.generate_label()
@@ -287,14 +238,15 @@ class Generator(c_ast.NodeVisitor):
         resName=self.visit(node.cond)
         print(f"if ({resName})  goto {label0};")
         print(f"goto {label1};")
+        print(f"{label0}:1;")
         if(node.iftrue):
-            print(f"{label0}:")
+
             self.visit(node.iftrue)
             print(f"goto {label2};")
+        print(f"{label1}:1;")
         if(node.iffalse):
-            print(f"{label1}:")
             self.visit(node.iffalse)
-            print(f"{label2}:")
+        print(f"{label2}:1;")
     def visit_Switch(self,node):
         #拿到 case 的对象 i
         ids=self.visit(node.cond)
@@ -322,18 +274,11 @@ class Generator(c_ast.NodeVisitor):
             #     print(f"goto {label_end};")
         for i in range(num_case):
             item=node.stmt.block_items[i]
-            print(f"{case_labels[i]}:")
-            # if (isinstance(item, Case)):
-            #     for s in item.stmts:
-            #         self.visit(s)
-            #         # if(isinstance(s,Break)):
-            #         #     print(f"goto {label_end};")-------------------------------??对不对？
-            # if(isinstance(item, Default)):
-            #     for s in item.stmts:
-            #         self.visit(s)
+            print(f"{case_labels[i]}:1;")
+
             for s in item.stmts:
                 self.visit(s)
-        print(f"{label_end}:")
+        print(f"{label_end}:1;")
         self.quit_switch()
 
     def visit_For(self,node):
@@ -342,7 +287,7 @@ class Generator(c_ast.NodeVisitor):
         start_label = self.generate_label()
         end_label = self.generate_label()
         label2 = self.generate_label()
-        print(f"{start_label}:")
+        print(f"{start_label}:1;")
         self.enter_loop(start_label,end_label)
         #cond
         # if(isinstance(node.cond,BinaryOp)):
@@ -352,23 +297,23 @@ class Generator(c_ast.NodeVisitor):
 
         print(f"goto {label2};")
         print(f"goto {end_label};")
-        print(f"{label2}:")
+        print(f"{label2}:1;")
         #stmt
         self.visit(node.stmt)
         #next
         self.visit(node.next)
         #end
         print(f"goto {start_label};")
-        print(f"{end_label}:")
+        print(f"{end_label}:1;")
         self.quit_loop()
 
     def visit_ArrayRef(self,node):
         name=self.visit(node.name)
         num=self.visit(node.subscript)
         temp=self.generate_temp()
-        print(f"{temp} = {name} + {num}")
+        print(f"{temp} = {name} + {num};")
         temp2 = self.generate_temp()
-        print(f"{temp2} = *{temp}")
+        print(f"{temp2} = *{temp};")
         return temp2
         # print (name)
         # print(num)
@@ -402,9 +347,24 @@ def main():
     # 解析输入文件
     ast = parse_file(input_path, use_cpp=True)
 
-    generator = Generator()
-    ast = generator.visit(ast)
+    with open(output_path, 'w', encoding='utf-8') as file:
+        # 保存当前的stdout
+        original_stdout = sys.stdout
+        try:
+            # 将stdout重定向到文件
+            sys.stdout = file
 
+            # 现在使用print将文本写入文件应该不会引发错误
+            generator = Generator()
+            generator.visit(ast)
+            # 更多的print调用...
+
+        finally:
+            # 恢复原始的stdout，确保后续的print调用正常输出到控制台
+            sys.stdout = original_stdout
+
+    generator = Generator()
+    generator.visit(ast)
     # 打印AST
     # ast.show()
 
