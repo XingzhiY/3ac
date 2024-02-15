@@ -123,7 +123,8 @@ class Generator(c_ast.NodeVisitor):
         name_list=[]
         if node.exprs:
             for expr in node.exprs:
-                name_list.append(expr.value)
+                value=self.visit(expr)
+                name_list.append(value)
         return name_list
     def visit_FuncCall(self,node):
         name=self.visit(node.name)
@@ -195,6 +196,10 @@ class Generator(c_ast.NodeVisitor):
             res = self.generate_temp()
             print(f"{res} = {name};")
             print(f"{name} = {name} - 1;")
+        elif node.op == '&':
+            res=self.generate_temp()
+            value=self.visit(node.expr)
+            print(f"{res} = &{value}")
         else:
             print("unkbown unary op")
         return res
@@ -219,7 +224,23 @@ class Generator(c_ast.NodeVisitor):
     def visit_Constant(self, node):
         # 打印Constant节点的类型和值
         return node.value
+    def visit_DoWhile(self,node):
+        label0 = self.generate_label()
+        label1 = self.generate_label()
+        label2 = self.generate_label()
 
+        print(f"goto {label2};")
+        print(f"{label0}:")
+
+        resName = self.visit(node.cond)
+        print(f"if ({resName})  goto {label2};")
+        print(f"goto {label1};")
+
+        print(f"{label2}:")
+        self.visit(node.stmt)
+
+        print(f"goto {label0};")
+        print(f"{label1}:")
 
     def visit_While(self,node):
         label0 = self.generate_label()
