@@ -1,7 +1,11 @@
 import argparse
+import json
+
 from pycparser import parse_file, c_generator, c_ast, c_parser
 from pycparser.c_ast import *
 from pycparser.c_generator import CGenerator
+
+from a2.show_ast import ast_to_dict
 
 
 class Generator(c_ast.NodeVisitor):
@@ -61,24 +65,43 @@ class Generator(c_ast.NodeVisitor):
 
         return label_name
     def visit_FileAST(self, node):
-
+        out=[]
         for i in node:
             if isinstance(i, Decl):
-                # out.append(i)
+                out.append(i)
                 print("declare bug 1")
             else:
-                self.visit(i)
+                out.append(self.visit(i))
             self.reset()
-
+        return FileAST(out)
     def visit_FuncDef(self, node):
         # 首先处理函数定义的其他部分，比如函数声明等
         # ...
-        # self.visit(node.decl)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # self.visit(node.decl)
         # 然后找到并访问Compound节点
-        if isinstance(node.body, c_ast.Compound):
-            self.visit(node.body) # visit compound
-        print("}")
+        # out = []
+        # if isinstance(node.body, c_ast.Compound):
+        #     out.append(self.visit(node.body)) # visit compound
+        # print("}")
+        # return FuncDef(node.decl,node.param_decls,out,node.coord)
+        # return node
 
+
+        modified_body = None
+        if isinstance(node.body, c_ast.Compound):
+            # 如果函数体是一个复合语句，访问并可能修改它
+            modified_body = self.visit(node.body)
+
+        # 构造一个新的FuncDef节点
+        # 假设FuncDef的构造器参数为: decl（函数声明）, param_decls（参数声明列表）, body（函数体）, coord（节点的坐标）
+        # 你需要根据你使用的具体AST库的文档来调整这些参数
+        modified_node = c_ast.FuncDef(
+            decl=node.decl,
+            param_decls=node.param_decls,
+            body=modified_body if modified_body is not None else node.body,
+            coord=node.coord
+        )
+        return modified_node
     def visit_FuncDecl(self, node):
         generator = c_generator.CGenerator()
         func_decl_code = generator.visit(node)
@@ -89,19 +112,67 @@ class Generator(c_ast.NodeVisitor):
     def visit_Compound(self, node):
         # 在这里处理Compound节点
         # 遍历Compound节点中的所有语句和声明
-        for item in node.block_items:
-            self.visit(item)
+        # out=[]
+        # for item in node.block_items:
+        #     out.append(item)
+        #     self.visit(item)
+        # # out.append(node.block_items[0])
+        # return Compound(out)
+
+        # 初始化一个列表来收集可能已修改的语句和声明
+        out = []
+
+        # 检查node.block_items是否存在
+        if node.block_items:
+            for item in node.block_items:
+                # 对每个项调用self.visit()，这可能会返回一个修改过的节点
+                visited_item = self.visit(item)
+
+                # 如果self.visit返回了一个值，我们假设它是一个修改过的节点，并将其添加到out列表中
+                # 如果没有返回值（即self.visit返回None），则添加原始项
+                if visited_item is not None:
+                    print("hello")
+                    out.append(visited_item)
+                else:
+                    out.append(item)
+
+        # 使用可能已修改的项列表构造一个新的Compound节点
+        # 注意：根据你所使用的AST库，Compound节点的构造方式可能有所不同
+        # 以下是一个示例，你可能需要根据你的库文档进行调整
+        modified_node = c_ast.Compound(block_items=out)
+
+        # 返回修改后的Compound节点
+        return modified_node
 
 
     def visit_Assignment(self, node):
 
-        left = self.visit(node.lvalue)  # 假设左值是一个简单的标识符
-        left=self.name_list.pop()
-        right = self.visit(node.rvalue)
-        right=self.name_list.pop()
+        # left = self.visit(node.lvalue)  # 假设左值是一个简单的标识符
+        # left=self.name_list.pop()
+        # right = self.visit(node.rvalue)
+        # right=self.name_list.pop()
+        #
+        # # 打印三地址代码
+        # print(f"{left} = {right};")
 
-        # 打印三地址代码
+        modified_lvalue = self.visit(node.lvalue)
+        # 从name_list中弹出左值名字，这假设self.visit(node.lvalue)导致了一个名字被推入name_list
+        left = self.name_list.pop()
+
+        # 访问并可能修改右值
+        modified_rvalue = self.visit(node.rvalue)
+        # 根据修改后的rvalue更新name_list，并弹出最后一个元素
+        right = self.name_list.pop()
+
+        # 打印三地址代码形式的赋值，这里假设修改后的right已经是3AC格式
         print(f"{left} = {right};")
+
+        # 构造一个新的Assignment节点，使用原始的操作符、左值和修改后的右值
+        # 注意：这里假设op和coord在原始节点中是可用的，且你希望保持它们不变
+        modified_node = Assignment(node.op, node.lvalue, modified_rvalue, node.coord)
+
+        # 返回修改后的节点
+        return modified_node
     def visit_ExprList(self, node):
         name_list=[]
         if node.exprs:
@@ -212,11 +283,13 @@ class Generator(c_ast.NodeVisitor):
     def visit_ID(self, node):
         # return node.name
         self.name_list.append(node.name)
+        return node
 
     def visit_Constant(self, node):
         # 打印Constant节点的类型和值
         # return node.value
         self.name_list.append(node.value)
+        return node
     def visit_DoWhile(self,node):
         start_label = self.generate_label()
         end_label = self.generate_label()
@@ -374,26 +447,34 @@ def main():
     # 解析输入文件
     ast = parse_file(input_path, use_cpp=True)
 
-    with open(output_path, 'w', encoding='utf-8') as file:
-        # 保存当前的stdout
-        original_stdout = sys.stdout
-        try:
-            # 将stdout重定向到文件
-            sys.stdout = file
-
-            # 现在使用print将文本写入文件应该不会引发错误
-            generator = Generator()
-            generator.visit(ast)
-            # 更多的print调用...
-
-        finally:
-            # 恢复原始的stdout，确保后续的print调用正常输出到控制台
-            sys.stdout = original_stdout
+    # with open(output_path, 'w', encoding='utf-8') as file:
+    #     # 保存当前的stdout
+    #     original_stdout = sys.stdout
+    #     try:
+    #         # 将stdout重定向到文件
+    #         sys.stdout = file
+    #
+    #         # 现在使用print将文本写入文件应该不会引发错误
+    #         generator = Generator()
+    #         generator.visit(ast)
+    #         # 更多的print调用...
+    #
+    #     finally:
+    #         # 恢复原始的stdout，确保后续的print调用正常输出到控制台
+    #         sys.stdout = original_stdout
 
     generator = Generator()
-    generator.visit(ast)
+    new_ast=generator.visit(ast)
+    print("---------------------")
+    ast_dict=ast_to_dict(new_ast)
+    with open("aaaaaaaaaaa.json", 'w') as output_file:
+        json.dump(ast_dict, output_file, indent=2)
     # 打印AST
     # ast.show()
+    new_generator = c_generator.CGenerator()
+    print(new_generator.visit(new_ast))
+
+
 
 
 
