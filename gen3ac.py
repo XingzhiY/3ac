@@ -69,6 +69,9 @@ class Generator(c_ast.NodeVisitor):
         temp_name = f"temp{self.tempId}"
         self.tempId += 1
         print(f"int {temp_name};")
+        new_type=c_ast.IdentifierType(names=["int"])
+        new_TypeDecl=c_ast.TypeDecl(declname=temp_name,type=new_type,quals=None,align=None)
+        self.flat_block_items.append(c_ast.Decl(name=temp_name,type=new_TypeDecl,quals=None,align=None,storage=None,funcspec=None,init=None,bitsize=None))
         return temp_name
     def generate_label(self):
         label_name = f"label{self.labelId}"
@@ -84,7 +87,7 @@ class Generator(c_ast.NodeVisitor):
             else:
                 out.append(self.visit(i))
             self.reset()
-            print("@@@@@@@@@@@@@@@@@@@@")
+            # print("@@@@@@@@@@@@@@@@@@@@")
         return FileAST(out)
     def visit_FuncDef(self, node):
         # 首先处理函数定义的其他部分，比如函数声明等
@@ -252,6 +255,7 @@ class Generator(c_ast.NodeVisitor):
             right=self.name_list.pop()
             print(f"{name} = {right};")
         # print(f"{type}")
+        self.flat_block_items.append(node)
 
 
     def visit_UnaryOp(self, node):
