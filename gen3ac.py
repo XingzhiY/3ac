@@ -5,8 +5,17 @@ from pycparser import parse_file, c_generator, c_ast, c_parser
 from pycparser.c_ast import *
 from pycparser.c_generator import CGenerator
 
-from a2.show_ast import ast_to_dict
-
+# from a2.show_ast import ast_to_dict
+def ast_to_dict(node):
+    if isinstance(node, c_ast.Node):
+        result = {type(node).__name__: {attr: ast_to_dict(getattr(node, attr)) for attr in node.attr_names}}
+        for name, child in node.children():
+            result[type(node).__name__][name] = ast_to_dict(child)
+        return result
+    elif isinstance(node, list):
+        return [ast_to_dict(child) for child in node]
+    else:
+        return node
 
 class Generator(c_ast.NodeVisitor):
     def __init__(self):
@@ -25,6 +34,7 @@ class Generator(c_ast.NodeVisitor):
         self.name_list=[]
         self.temp_list=[]
         self.flat_block_items = []
+        self.if_end_label=None
         #常数------------
         self.const=c_ast.Constant(type="int",value="1")
 
@@ -45,6 +55,9 @@ class Generator(c_ast.NodeVisitor):
         self.name_list=[]
         self.temp_list=[]
         self.flat_block_items = []
+        self.if_end_label=None
+
+
     def get_label(self,x):
         return c_ast.Label(name=x,stmt=self.const)
     def get_goto(self,x):
@@ -78,6 +91,15 @@ class Generator(c_ast.NodeVisitor):
         new_type=c_ast.IdentifierType(names=["int"])
         new_TypeDecl=c_ast.TypeDecl(declname=temp_name,type=new_type,quals=None,align=None)
         self.flat_block_items.append(c_ast.Decl(name=temp_name,type=new_TypeDecl,quals=None,align=None,storage=None,funcspec=None,init=None,bitsize=None))
+        return temp_name
+    def generate_temp_pointer(self):
+        temp_name = f"temp{self.tempId}"
+        self.tempId += 1
+        print(f"int {temp_name};")
+        new_type=c_ast.IdentifierType(names=["int"])
+        new_TypeDecl=c_ast.TypeDecl(declname=temp_name,type=new_type,quals=None,align=None)
+        new_pointer_declare=c_ast.PtrDecl(quals=None,type=new_TypeDecl)
+        self.flat_block_items.append(c_ast.Decl(name=temp_name,type=new_pointer_declare,quals=None,align=None,storage=None,funcspec=None,init=None,bitsize=None))
         return temp_name
     def get_id(self,s):
         return c_ast.ID(name=s)
@@ -255,7 +277,7 @@ class Generator(c_ast.NodeVisitor):
         # return temp
         self.name_list.append(temp_name)
         self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=temp,rvalue=c_ast.FuncCall(name=node.name,args=c_ast.ExprList(exprs=id_list))))
-
+        return temp
 
 
 
@@ -348,10 +370,17 @@ class Generator(c_ast.NodeVisitor):
         # 处理左侧表达式
         left_node = self.visit(node.left)
         left_name=self.name_list.pop()
+
+        end_label=None
+        if(node.op=="&&"):
+            end_label=self.generate_label()
+            self.flat_block_items.append(c_ast.If(cond=c_ast.UnaryOp(op="!",expr=left_node), iftrue=self.get_goto(end_label), iffalse=None))
         # 处理右侧表达式
         right_node = self.visit(node.right)
         right_name=self.name_list.pop()
 
+        if(end_label!=None):
+            self.flat_block_items.append(self.get_label(end_label))
 
         # 打印二元操作的3AC
         result_name = self.generate_temp()
@@ -430,7 +459,10 @@ class Generator(c_ast.NodeVisitor):
         label1 = self.generate_label()
         label2 = self.generate_label()
 
+
         temp=self.visit(node.cond)
+
+
         resName=self.name_list.pop()
         print(f"if ({resName})  goto {label0};")
         self.flat_block_items.append(c_ast.If(cond=temp,iftrue=self.get_goto(label0),iffalse=None))
@@ -528,11 +560,11 @@ class Generator(c_ast.NodeVisitor):
         name=self.name_list.pop()
         temp_id=self.visit(node.subscript)
         num=self.name_list.pop()
-        temp=self.generate_temp()
+        temp=self.generate_temp_pointer()
         real_temp=self.get_id(temp)
         print(f"{temp} = {name} + {num};")
         self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=real_temp,rvalue=c_ast.BinaryOp(op="+",left=temp_name,right=temp_id)))
-        temp2 = self.generate_temp()
+        temp2 = self.generate_temp_pointer()
         real_temp2=self.get_id(temp2)
         print(f"{temp2} = *{temp};")
         self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=real_temp2,rvalue=c_ast.UnaryOp(op="*",expr=real_temp)))
@@ -573,7 +605,7 @@ def main():
     parser = c_parser.CParser()
 
     # 解析输入文件
-    ast = parse_file(input_path, use_cpp=True)
+
 
     # with open(output_path, 'w', encoding='utf-8') as file:
     #     # 保存当前的stdout
@@ -591,16 +623,26 @@ def main():
     #         # 恢复原始的stdout，确保后续的print调用正常输出到控制台
     #         sys.stdout = original_stdout
 
+    #生成我的 ast
+    ast = parse_file(input_path, use_cpp=True)
     generator = Generator()
     new_ast=generator.visit(ast)
     print("---------------------")
+
+    #打印我的 ast 原始格式到文件,用来debug
     ast_dict=ast_to_dict(new_ast)
+    # with open("aaaaaaaaaaa_my_new_ast.json", 'w') as output_file:
+    #     json.dump(ast_dict, output_file, indent=2)
+
     with open("aaaaaaaaaaa_my_new_ast.json", 'w') as output_file:
         json.dump(ast_dict, output_file, indent=2)
+
     # 打印AST
-    # ast.show()
     new_generator = c_generator.CGenerator()
     print(new_generator.visit(new_ast))
+    ast_str=new_generator.visit(new_ast)
+    with open(output_path, 'w') as file:
+        file.write(ast_str)  # 将AST字符串写入文件
 
 
 
