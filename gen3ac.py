@@ -381,18 +381,27 @@ class Generator(c_ast.NodeVisitor):
         label2 = self.generate_label()
         self.enter_loop(start_label,end_label)
         print(f"goto {label2};")
+        self.flat_block_items.append(self.get_goto(label2))
         print(f"{start_label}:1;")
-
-        resName = self.visit(node.cond)
+        self.flat_block_items.append(self.get_label(start_label))
+        cond = self.visit(node.cond)
         resName=self.name_list.pop()
         print(f"if ({resName})  goto {label2};")
+        self.flat_block_items.append(c_ast.If(cond=cond, iftrue=self.get_goto(label2), iffalse=None))
         print(f"goto {end_label};")
+        self.flat_block_items.append(self.get_goto(end_label))
 
         print(f"{label2}:1;")
+        self.flat_block_items.append(self.get_label(label2))
+
         self.visit(node.stmt)
 
         print(f"goto {start_label};")
+        self.flat_block_items.append(self.get_goto(start_label))
+
         print(f"{end_label}:1;")
+        self.flat_block_items.append(self.get_label(end_label))
+
         self.quit_loop()
 
     def visit_While(self,node):
