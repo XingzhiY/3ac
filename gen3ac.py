@@ -25,6 +25,8 @@ class Generator(c_ast.NodeVisitor):
         self.name_list=[]
         self.temp_list=[]
         self.flat_block_items = []
+        #常数------------
+        self.const=c_ast.Constant(type="int",value="1")
 
 
     def reset(self):
@@ -73,6 +75,8 @@ class Generator(c_ast.NodeVisitor):
         new_TypeDecl=c_ast.TypeDecl(declname=temp_name,type=new_type,quals=None,align=None)
         self.flat_block_items.append(c_ast.Decl(name=temp_name,type=new_TypeDecl,quals=None,align=None,storage=None,funcspec=None,init=None,bitsize=None))
         return temp_name
+    def get_id(self,s):
+        return c_ast.ID(name=s)
     def generate_label(self):
         label_name = f"label{self.labelId}"
         self.labelId += 1
@@ -260,9 +264,10 @@ class Generator(c_ast.NodeVisitor):
 
     def visit_UnaryOp(self, node):
         res="visit_UnaryOp res"
+        temp=None
         # 获取表达式的字符串表示
         if node.expr:
-            name=self.visit(node.expr)
+            a=self.visit(node.expr)
             name=self.name_list.pop()
         else:
             print("todo 4231")
@@ -271,30 +276,54 @@ class Generator(c_ast.NodeVisitor):
         if node.op == '++':
             # 前置自增
             print(f"{name} = {name} + 1;")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=a,rvalue=c_ast.BinaryOp(op="+",left=a,right=self.const)))
             res=name
+            temp=a;
         elif node.op == 'p++':
             # 如果是后置自增，使用临时变量保存原始值
             res = self.generate_temp()
+            temp=self.get_id(res)
+
             print(f"{res} = {name};")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=temp,rvalue=a))
+
             print(f"{name} = {name} + 1;")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=a,rvalue=c_ast.BinaryOp(op="+",left=a,right=self.const)))
+
         elif node.op in '--':
             # 前置自减
             print(f"{name} = {name} - 1;")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=a,rvalue=c_ast.BinaryOp(op="-",left=a,right=self.const)))
+
             res=name
+            temp=a
         elif node.op == 'p--':
             # 如果是后置自减，使用临时变量保存原始值
             res = self.generate_temp()
+            temp=self.get_id(res)
+
             print(f"{res} = {name};")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=temp,rvalue=a))
+
             print(f"{name} = {name} - 1;")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=a,rvalue=c_ast.BinaryOp(op="-",left=a,right=self.const)))
+
         elif node.op == '&':
             res=self.generate_temp()
-            value=self.visit(node.expr)
+            temp=self.get_id(res)
+
+            id=self.visit(node.expr)
             value=self.name_list.pop()
             print(f"{res} = &{value};")
+            self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=temp,rvalue=c_ast.UnaryOp(op="&",expr=id)))
+
         else:
             print("unkbown unary op")
         # return res
         self.name_list.append(res)
+        #return 给别人的数，const或者temp或者ID
+        return temp
+
 
     def visit_BinaryOp(self, node):
         right_name = ""
