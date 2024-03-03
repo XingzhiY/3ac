@@ -211,22 +211,28 @@ class Generator(c_ast.NodeVisitor):
         return modified_node
     def visit_ExprList(self, node):
         name_list=[]
+        id_list=[]
         if node.exprs:
             for expr in node.exprs:
-                value=self.visit(expr)
+                id_list.append(self.visit(expr))
                 value=self.name_list.pop()
                 name_list.append(value)
         # return name_list
         self.name_list.append(name_list)
+        return id_list
     def visit_FuncCall(self,node):
         name=self.visit(node.name)
         name=self.name_list.pop()
+
+        id_list=[]
+
         func_call_str = f"{name}()"
+
 
         # 检查是否存在参数
         if node.args:
             # 访问参数节点并获取包含所有参数的字符串列表
-            args = self.visit(node.args)
+            id_list = self.visit(node.args)
             args = self.name_list.pop()
 
             # 将参数列表转换为字符串，参数之间用逗号和空格分隔
@@ -236,10 +242,17 @@ class Generator(c_ast.NodeVisitor):
             func_call_str = f"{name}({args_str})"
 
         # 返回完整的函数调用字符串
-        temp=self.generate_temp()
-        print(f"{temp}={func_call_str};")
+        temp_name=self.generate_temp()
+        temp=self.get_id(temp_name)
+
+        print(f"{temp_name}={func_call_str};")
+        # self.myprint(id_list)
+
         # return temp
-        self.name_list.append(temp)
+        self.name_list.append(temp_name)
+        self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=temp,rvalue=c_ast.FuncCall(name=node.name,args=c_ast.ExprList(exprs=id_list))))
+
+
 
 
     def visit_TypeDecl(self,node):
