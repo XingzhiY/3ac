@@ -24,18 +24,29 @@ class Generator(c_ast.NodeVisitor):
         self.continue_labels=[]
         self.name_list=[]
         self.temp_list=[]
+        self.flat_block_items = []
 
 
     def reset(self):
         self.braces = [] #大括号
         self.tempId = 0 #临时var的计数器
-        self.binaryVar = [] #临时var
+        self.binaryVar = [] #binary临时var
         self.unaryVar = [] #unary操作推进去的var name
         self.ids = []  #ID 的name
         self.constants = []  #常数的value
+        self.labelId=0 #label 的 id
+        self.labels=[] #label列表，都要消耗掉
+        self.cond_labels=[] #cond产生的label
         # -------------------------
-        self.break_labels = []
-        self.continue_labels = []
+        self.break_labels=[]
+        self.continue_labels=[]
+        self.name_list=[]
+        self.temp_list=[]
+        self.flat_block_items = []
+    def myprint(self,x):
+        print("\n======start=====\n")
+        print (x)
+        print("\n====end=======\n")
     def enter_switch(self,label):
         self.break_labels.append(label)
 
@@ -73,6 +84,7 @@ class Generator(c_ast.NodeVisitor):
             else:
                 out.append(self.visit(i))
             self.reset()
+            print("@@@@@@@@@@@@@@@@@@@@")
         return FileAST(out)
     def visit_FuncDef(self, node):
         # 首先处理函数定义的其他部分，比如函数声明等
@@ -90,17 +102,28 @@ class Generator(c_ast.NodeVisitor):
         modified_body = None
         if isinstance(node.body, c_ast.Compound):
             # 如果函数体是一个复合语句，访问并可能修改它
-            modified_body = self.visit(node.body)
+            # modified_body = self.visit(node.body)
+            self.visit(node.body)
+
+            modified_body = c_ast.Compound(block_items=self.flat_block_items)
+            # self.flat_block_items = []
+
+
 
         # 构造一个新的FuncDef节点
         # 假设FuncDef的构造器参数为: decl（函数声明）, param_decls（参数声明列表）, body（函数体）, coord（节点的坐标）
         # 你需要根据你使用的具体AST库的文档来调整这些参数
         modified_node = c_ast.FuncDef(
             decl=node.decl,
-            param_decls=node.param_decls,
+            param_decls=None,
             body=modified_body if modified_body is not None else node.body,
-            coord=node.coord
+            # coord=node.coord
         )
+        # self.myprint(node.decl)
+        # self.myprint(node.param_decls)
+        # self.myprint(self.flat_block_items)
+        # self.myprint(modified_body)
+
         return modified_node
     def visit_FuncDecl(self, node):
         generator = c_generator.CGenerator()
@@ -109,40 +132,46 @@ class Generator(c_ast.NodeVisitor):
         print("{")
 
 
-    def visit_Compound(self, node):
-        # 在这里处理Compound节点
-        # 遍历Compound节点中的所有语句和声明
-        # out=[]
-        # for item in node.block_items:
-        #     out.append(item)
-        #     self.visit(item)
-        # # out.append(node.block_items[0])
-        # return Compound(out)
-
-        # 初始化一个列表来收集可能已修改的语句和声明
-        out = []
-
-        # 检查node.block_items是否存在
-        if node.block_items:
-            for item in node.block_items:
-                # 对每个项调用self.visit()，这可能会返回一个修改过的节点
-                visited_item = self.visit(item)
+    # def visit_Compound(self, node):
+    #     # 在这里处理Compound节点
+    #     # 遍历Compound节点中的所有语句和声明
+    #     # out=[]
+    #     # for item in node.block_items:
+    #     #     out.append(item)
+    #     #     self.visit(item)
+    #     # # out.append(node.block_items[0])
+    #     # return Compound(out)
+    #
+    #     # self.myprint(len(node.block_items))
+    #
+    #     # 初始化一个列表来收集可能已修改的语句和声明
+    #     out = []
+    #
+    #     # 检查node.block_items是否存在
+    #     if node.block_items:
+    #         for item in node.block_items:
+    #             # 对每个项调用self.visit()，这可能会返回一个修改过的节点
+    #             visited_item = self.visit(item)
 
                 # 如果self.visit返回了一个值，我们假设它是一个修改过的节点，并将其添加到out列表中
                 # 如果没有返回值（即self.visit返回None），则添加原始项
-                if visited_item is not None:
-                    print("hello")
-                    out.append(visited_item)
-                else:
-                    out.append(item)
+                # if visited_item is not None:
+                #     print("hello")
+                #     out.append(visited_item)
+                # else:
+                #     out.append(item)
 
         # 使用可能已修改的项列表构造一个新的Compound节点
         # 注意：根据你所使用的AST库，Compound节点的构造方式可能有所不同
         # 以下是一个示例，你可能需要根据你的库文档进行调整
-        modified_node = c_ast.Compound(block_items=out)
+        # modified_node = c_ast.Compound(block_items=self.flat_block_items)
+        # self.flat_block_items = []
+        # self.myprint(len(modified_node.block_items))
+
 
         # 返回修改后的Compound节点
-        return modified_node
+        # return modified_node
+        # return c_ast.Compound(block_items=self.flat_block_items)
 
 
     def visit_Assignment(self, node):
@@ -170,7 +199,7 @@ class Generator(c_ast.NodeVisitor):
         # 构造一个新的Assignment节点，使用原始的操作符、左值和修改后的右值
         # 注意：这里假设op和coord在原始节点中是可用的，且你希望保持它们不变
         modified_node = Assignment(node.op, node.lvalue, modified_rvalue, node.coord)
-
+        self.flat_block_items.append(modified_node)
         # 返回修改后的节点
         return modified_node
     def visit_ExprList(self, node):
@@ -267,18 +296,24 @@ class Generator(c_ast.NodeVisitor):
         right_name = ""
         left_name = ""
         # 处理左侧表达式
-        left_name = self.visit(node.left)
+        left_node = self.visit(node.left)
         left_name=self.name_list.pop()
         # 处理右侧表达式
-        right_name = self.visit(node.right)
+        right_node = self.visit(node.right)
         right_name=self.name_list.pop()
 
 
         # 打印二元操作的3AC
         result_name = self.generate_temp()
         print(f"{result_name} = {left_name} {node.op} {right_name};")
+        new_binary_op = BinaryOp(node.op, left_node, right_node)
+        new_id=ID(result_name)
+
+        new_assign=Assignment("=", new_id, new_binary_op)
+        self.flat_block_items.append(new_assign)
         # return result_name
         self.name_list.append(result_name)
+        return new_id
 
     def visit_ID(self, node):
         # return node.name
@@ -467,7 +502,7 @@ def main():
     new_ast=generator.visit(ast)
     print("---------------------")
     ast_dict=ast_to_dict(new_ast)
-    with open("aaaaaaaaaaa.json", 'w') as output_file:
+    with open("aaaaaaaaaaa_my_new_ast.json", 'w') as output_file:
         json.dump(ast_dict, output_file, indent=2)
     # 打印AST
     # ast.show()
