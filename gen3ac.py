@@ -45,6 +45,10 @@ class Generator(c_ast.NodeVisitor):
         self.name_list=[]
         self.temp_list=[]
         self.flat_block_items = []
+    def get_label(self,x):
+        return c_ast.Label(name=x,stmt=self.const)
+    def get_goto(self,x):
+        return c_ast.Goto(name=x)
     def myprint(self,x):
         print("\n======start=====\n")
         print (x)
@@ -411,19 +415,26 @@ class Generator(c_ast.NodeVisitor):
         label1 = self.generate_label()
         label2 = self.generate_label()
 
-        resName=self.visit(node.cond)
+        temp=self.visit(node.cond)
         resName=self.name_list.pop()
         print(f"if ({resName})  goto {label0};")
+        self.flat_block_items.append(c_ast.If(cond=temp,iftrue=self.get_goto(label0),iffalse=None))
         print(f"goto {label1};")
+        self.flat_block_items.append(self.get_goto(label1))
+
         print(f"{label0}:1;")
+        self.flat_block_items.append(self.get_label(label0))
         if(node.iftrue):
 
             self.visit(node.iftrue)
             print(f"goto {label2};")
+            self.flat_block_items.append(self.get_goto(label2))
         print(f"{label1}:1;")
+        self.flat_block_items.append(self.get_label(label1))
         if(node.iffalse):
             self.visit(node.iffalse)
         print(f"{label2}:1;")
+        self.flat_block_items.append(self.get_label(label2))
     def visit_Switch(self,node):
         #拿到 case 的对象 i
         name=self.visit(node.cond)
