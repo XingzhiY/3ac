@@ -509,16 +509,21 @@ class Generator(c_ast.NodeVisitor):
         self.quit_loop()
 
     def visit_ArrayRef(self,node):
-        name=self.visit(node.name)
+        temp_name=self.visit(node.name)
         name=self.name_list.pop()
-        num=self.visit(node.subscript)
+        temp_id=self.visit(node.subscript)
         num=self.name_list.pop()
         temp=self.generate_temp()
+        real_temp=self.get_id(temp)
         print(f"{temp} = {name} + {num};")
+        self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=real_temp,rvalue=c_ast.BinaryOp(op="+",left=temp_name,right=temp_id)))
         temp2 = self.generate_temp()
+        real_temp2=self.get_id(temp2)
         print(f"{temp2} = *{temp};")
+        self.flat_block_items.append(c_ast.Assignment(op="=",lvalue=real_temp2,rvalue=c_ast.UnaryOp(op="*",expr=real_temp)))
         # return temp2
         self.name_list.append(temp2)
+        return real_temp2
 
     def visit_Break(self,node):
         label=self.get_break()
