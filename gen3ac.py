@@ -535,9 +535,10 @@ class Generator(c_ast.NodeVisitor):
         print(f"goto {label};")
         self.flat_block_items.append(self.get_goto(label))
     def visit_Return(self, node):
-        res=self.visit(node.expr)
+        expr=self.visit(node.expr)
         res=self.name_list.pop()
         print(f"return {res};")
+        self.flat_block_items.append(c_ast.Return(expr=expr))
 
 
 
