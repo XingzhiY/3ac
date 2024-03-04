@@ -9,7 +9,7 @@ from pycparser import parse_file, c_generator, c_ast, c_parser
 from pycparser.c_ast import *
 from pycparser.c_generator import CGenerator
 
-bb_num=0
+# bb_num=0
 def ast_to_dict(node):
     if isinstance(node, c_ast.Node):
         result = {type(node).__name__: {attr: ast_to_dict(getattr(node, attr)) for attr in node.attr_names}}
@@ -30,6 +30,9 @@ def print_json_ast(ast):
 class bbGenerator(c_ast.NodeVisitor):
     def __init__(self):
         self.list=[]
+        self.bb_num=0
+    def get_bbnum(self):
+        return self.bb_num
     def visit_FileAST(self, node):
         out=[]
         for i in node:
@@ -58,24 +61,24 @@ class bbGenerator(c_ast.NodeVisitor):
                 end_block_flag=True
             if(isinstance(statement,c_ast.Goto)):
                 end_block_flag=True
-            global bb_num
+            # global bb_num
             if(new_block_flag and (len(block)!=0)):
                 compound_block=c_ast.Compound(block_items=block)
                 block_list.append(compound_block)
                 block=[]
-                bb_num+=1
+                self.bb_num+=1
             block.append(statement)
             if(end_block_flag ):
                 compound_block = c_ast.Compound(block_items=block)
                 block_list.append(compound_block)
                 block = []
-                bb_num += 1
+                self.bb_num+=1
 
             new_block_flag=False
             end_block_flag=False
         compound_block=c_ast.Compound(block_items=block)
         block_list.append(compound_block)
-        bb_num += 1
+        self.bb_num+=1
 
         new_body=c_ast.Compound(block_items=block_list)
         # return node
@@ -99,6 +102,7 @@ if __name__ == '__main__':
 
     bbgenerator = bbGenerator()
     bb_ast = bbgenerator.visit(ast)
+    bbnum=bbgenerator.get_bbnum()
 
     print_json_ast(bb_ast)
 
@@ -106,7 +110,7 @@ if __name__ == '__main__':
 
     tab = "    "
     with open(args.outfile, 'w') as f:
-        for i in range(bb_num):
+        for i in range(bbnum):
             f.write("BB%03d:\n" % i)
             f.write(cgenerator.visit(bb_ast.ext[0].body.block_items[i]))
 
