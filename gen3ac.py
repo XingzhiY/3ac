@@ -631,9 +631,6 @@ def main():
 
     #打印我的 ast 原始格式到文件,用来debug
     ast_dict=ast_to_dict(new_ast)
-    # with open("aaaaaaaaaaa_my_new_ast.json", 'w') as output_file:
-    #     json.dump(ast_dict, output_file, indent=2)
-
     with open("aaaaaaaaaaa_my_new_ast.json", 'w') as output_file:
         json.dump(ast_dict, output_file, indent=2)
 
