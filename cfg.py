@@ -11,7 +11,8 @@ from pycparser.c_generator import CGenerator
 import os
 import sys
 import re
-import graphviz
+from graphviz import Digraph
+
 from pycparser import c_generator
 from pycparser.c_ast import *
 
@@ -162,31 +163,39 @@ if __name__ == '__main__':
             # 如果不存在，先为 key 创建一个新的集合
             bbgenerator.edge_dict[key] = set()
         bbgenerator.edge_dict[key].add(addr)
+    bbgenerator.edge_dict["ENTRY"] = set()
+    bbgenerator.edge_dict["ENTRY"].add('BB000')
+    bbgenerator.edge_dict[("BB%03d" % (bbnum-1))] = set()
+    bbgenerator.edge_dict[("BB%03d" % (bbnum-1))].add('EXIT')
 
     print(bbgenerator.edge_dict)
+
+    # 创建一个有向图对象
+    dot = Digraph(comment='CFG')
+
+    # 画node
+    for i in range(bbnum):
+        dot.node("BB%03d" % i)
+    dot.node("ENTRY")
+    dot.node("EXIT")
 
     #输出 edge
     with open(edge_path, 'w') as file:
         # 遍历字典中的每一项
         for key, values in bbgenerator.edge_dict.items():
-            # 移除键名中的字母，只保留数字部分
-
             # 遍历集合中的每一个值
             for value in values:
-                # 移除值中的字母，只保留数字部分
-
                 # 将键和值写入文件，格式为“键 值”
                 file.write(f"{key} {value}\n")
+                dot.edge(key, value)
 
+    dot.render(directory='.', filename=graph_path)
 
-    # print_json_ast(bb_ast)
-
-    cgenerator = c_generator.CGenerator()
-
-    tab = "    "
-    with open(args.outfile, 'w') as f:
-        for i in range(bbnum):
-            f.write("BB%03d:\n" % i)
-            f.write(cgenerator.visit(bb_ast.ext[0].body.block_items[i]))
+    # cgenerator = c_generator.CGenerator()
+    # tab = "    "
+    # with open(args.outfile, 'w') as f:
+    #     for i in range(bbnum):
+    #         f.write("BB%03d:\n" % i)
+    #         f.write(cgenerator.visit(bb_ast.ext[0].body.block_items[i]))
 
 
