@@ -174,8 +174,9 @@ if __name__ == '__main__':
     dot = Digraph(comment='CFG')
 
     # 画node
+    cgenerator = c_generator.CGenerator()
     for i in range(bbnum):
-        dot.node("BB%03d" % i)
+        dot.node("BB%03d" % i,("BB%03d" % i)+cgenerator.visit(bb_ast.ext[0].body.block_items[i]))
     dot.node("ENTRY")
     dot.node("EXIT")
 

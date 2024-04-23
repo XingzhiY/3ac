@@ -1,0 +1,99 @@
+factorial.c
+FileAST:
+  FuncDef:
+    Decl: factorial, [], [], [], []
+      FuncDecl:
+        ParamList:
+          Decl: n, [], [], [], []
+            TypeDecl: n, [], None
+              IdentifierType: ['unsigned', 'int']
+        TypeDecl: factorial, [], None
+          IdentifierType: ['unsigned', 'int']
+    Compound:
+      Decl: i, [], [], [], []
+        TypeDecl: i, [], None
+          IdentifierType: ['unsigned', 'int']
+      Decl: o, [], [], [], []
+        TypeDecl: o, [], None
+          IdentifierType: ['unsigned', 'int']
+      Assignment: =
+        ID: o
+        Constant: int, 1
+      For:
+        Assignment: =
+          ID: i
+          Constant: int, 1
+        BinaryOp: <=
+          ID: i
+          ID: n
+        UnaryOp: p++
+          ID: i
+        Compound:
+          Assignment: =
+            ID: o
+            BinaryOp: *
+              ID: o
+              ID: i
+      Return:
+        ID: o
+
+gcd.c
+FileAST:
+  FuncDef:
+    Decl: main, [], [], [], []
+      FuncDecl:
+        ParamList:
+          Typename: None, [], None
+            TypeDecl: None, [], None
+              IdentifierType: ['void']
+        TypeDecl: main, [], None
+          IdentifierType: ['int']
+    Compound:
+      Decl: guess, [], [], [], []
+        TypeDecl: guess, [], None
+          IdentifierType: ['int']
+      Decl: x, [], [], [], []
+        TypeDecl: x, [], None
+          IdentifierType: ['int']
+      Assignment: =
+        ID: guess
+        FuncCall:
+          ID: rand
+      DoWhile:
+        BinaryOp: !=
+          ID: x
+          ID: guess
+        Compound:
+          FuncCall:
+            ID: printf
+            ExprList:
+              Constant: string, "Enter number: "
+          FuncCall:
+            ID: scanf
+            ExprList:
+              Constant: string, "%d"
+              UnaryOp: &
+                ID: x
+          If:
+            BinaryOp: <
+              ID: x
+              ID: guess
+            Compound:
+              FuncCall:
+                ID: printf
+                ExprList:
+                  Constant: string, "higher!\n"
+            If:
+              BinaryOp: >
+                ID: x
+                ID: guess
+              Compound:
+                FuncCall:
+                  ID: printf
+                  ExprList:
+                    Constant: string, "lower!\n"
+              Compound:
+                FuncCall:
+                  ID: printf
+                  ExprList:
+                    Constant: string, "correct!\n"

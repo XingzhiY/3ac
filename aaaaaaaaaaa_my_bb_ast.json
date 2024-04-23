@@ -1,0 +1,691 @@
+{
+  "FileAST": {
+    "ext[0]": {
+      "FuncDef": {
+        "decl": {
+          "Decl": {
+            "name": "volchanger",
+            "quals": [],
+            "align": [],
+            "storage": [],
+            "funcspec": [],
+            "type": {
+              "FuncDecl": {
+                "args": {
+                  "ParamList": {
+                    "params[0]": {
+                      "Typename": {
+                        "name": null,
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "TypeDecl": {
+                            "declname": null,
+                            "quals": [],
+                            "align": null,
+                            "type": {
+                              "IdentifierType": {
+                                "names": [
+                                  "void"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "type": {
+                  "TypeDecl": {
+                    "declname": "volchanger",
+                    "quals": [],
+                    "align": null,
+                    "type": {
+                      "IdentifierType": {
+                        "names": [
+                          "void"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "body": {
+          "Compound": {
+            "block_items[0]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Decl": {
+                    "name": "i",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "i",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "char"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "vol",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "vol",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "init": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "10"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[1]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label0",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "If": {
+                    "cond": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    },
+                    "iftrue": {
+                      "Goto": {
+                        "name": "label2"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[2]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Goto": {
+                    "name": "label1"
+                  }
+                }
+              }
+            },
+            "block_items[3]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label2",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "temp0",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp0",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp0"
+                      }
+                    },
+                    "rvalue": {
+                      "FuncCall": {
+                        "name": {
+                          "ID": {
+                            "name": "getc"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[3]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "i"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp0"
+                      }
+                    }
+                  }
+                },
+                "block_items[4]": {
+                  "Decl": {
+                    "name": "temp1",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp1",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[5]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp1"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "==",
+                        "left": {
+                          "ID": {
+                            "name": "i"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "char",
+                            "value": "'q'"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[6]": {
+                  "If": {
+                    "cond": {
+                      "ID": {
+                        "name": "temp1"
+                      }
+                    },
+                    "iftrue": {
+                      "Goto": {
+                        "name": "label3"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[4]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Goto": {
+                    "name": "label4"
+                  }
+                }
+              }
+            },
+            "block_items[5]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label3",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Goto": {
+                    "name": "label1"
+                  }
+                }
+              }
+            },
+            "block_items[6]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Goto": {
+                    "name": "label5"
+                  }
+                }
+              }
+            },
+            "block_items[7]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label4",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[8]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label5",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "If": {
+                    "cond": {
+                      "BinaryOp": {
+                        "op": "==",
+                        "left": {
+                          "ID": {
+                            "name": "i"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "char",
+                            "value": "'+'"
+                          }
+                        }
+                      }
+                    },
+                    "iftrue": {
+                      "Goto": {
+                        "name": "label7"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[9]": {
+              "Compound": {
+                "block_items[0]": {
+                  "If": {
+                    "cond": {
+                      "BinaryOp": {
+                        "op": "==",
+                        "left": {
+                          "ID": {
+                            "name": "i"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "char",
+                            "value": "'-'"
+                          }
+                        }
+                      }
+                    },
+                    "iftrue": {
+                      "Goto": {
+                        "name": "label8"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[10]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label7",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "temp2",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp2",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp2"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "vol"
+                      }
+                    }
+                  }
+                },
+                "block_items[3]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "vol"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "+",
+                        "left": {
+                          "ID": {
+                            "name": "vol"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "int",
+                            "value": "1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[4]": {
+                  "Goto": {
+                    "name": "label6"
+                  }
+                }
+              }
+            },
+            "block_items[11]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label8",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "temp3",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp3",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp3"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "vol"
+                      }
+                    }
+                  }
+                },
+                "block_items[3]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "vol"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "-",
+                        "left": {
+                          "ID": {
+                            "name": "vol"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "int",
+                            "value": "1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[4]": {
+                  "Goto": {
+                    "name": "label6"
+                  }
+                }
+              }
+            },
+            "block_items[12]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label9",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "temp4",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp4",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp4"
+                      }
+                    },
+                    "rvalue": {
+                      "FuncCall": {
+                        "name": {
+                          "ID": {
+                            "name": "printf"
+                          }
+                        },
+                        "args": {
+                          "ExprList": {
+                            "exprs[0]": {
+                              "Constant": {
+                                "type": "string",
+                                "value": "\"unrecognized command: %c\\n\""
+                              }
+                            },
+                            "exprs[1]": {
+                              "ID": {
+                                "name": "i"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[13]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label6",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Goto": {
+                    "name": "label0"
+                  }
+                }
+              }
+            },
+            "block_items[14]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label1",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

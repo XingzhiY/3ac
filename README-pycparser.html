@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README-pycparser</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+</head>
+<body>
+<h1 id="pycparser-setup-guide">Pycparser Setup Guide</h1>
+<h2 id="install-pycparser">Install <code>pycparser</code></h2>
+<p>Install the latest version of <code>pycparser</code>. You can do this by:</p>
+<pre><code>pip3 install pycparser --user</code></pre>
+<p>Or:</p>
+<pre><code>python3 -m pip install pycparser --user</code></pre>
+<p>The source code for pycparser can be found on <a href="https://github.com/eliben/pycparser">GitHub</a></p>
+<h2 id="using-pycparser">Using <code>pycparser</code></h2>
+<p>For this assignment, you will need to parse a C file into an AST, change it into 3 address code and write back the changed AST to the output file.</p>
+<p>I strongly recommend reading the examples at <a href="https://github.com/eliben/pycparser/blob/master/examples/" class="uri">https://github.com/eliben/pycparser/blob/master/examples/</a> to understand how to use <code>pycparser</code>.</p>
+<p>Notably:</p>
+<ol type="1">
+<li><code>c-to-c.py</code> demonstrates parsing and writing back a C file.</li>
+<li><code>rewrite_ast.py</code> demonstrates changing values in the AST.</li>
+<li><code>func_calls.py</code> shows an example of the visitor pattern for traversing the AST.</li>
+</ol>
+<p>You can also use <code>examples/dump_ast.py</code> to show the AST structure of a C file – this is very useful in understanding the conversion of C code to ASTs. The file <code>pycparser/_c_ast.cfg</code> contains the full specification for the structure of the AST nodes.</p>
+<p>If you use the examples that contain C preprocessor directives (e.g. <code>#include</code>), you must run the preprocessor before you run pycparser. See the file <code>using_cpp_libc.py</code> in examples for code that does this.</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "type": "primary",
+  "version": 2,
+  "sets": {
+    "in": [
+      "gen3ac.py",
+      "README-pycparser.html",
+      "vn.py",
+      "cfg.py",
+      "3ac.pdf",
+      "genbb.py",
+      "README-vn.html"
+    ],
+    "out": [
+      "cfg.py",
+      "gen3ac.py",
+      "genbb.py",
+      "vn.py"
+    ]
+  },
+  "user_manifest": true,
+  "name": "a2",
+  "signature": "10d8f9b0d9bfd72930c8e0f88c0e18fab6ff6f4ef8cbbd07663df938e0a1dbdd16bb94c034f053a8b885cd05ec020e615235531ef7d085a85e90322e46cbe607",
+  "pubkey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA2iIRwqm8lm8SfleLeyXL9h9D6H0hVzZdXjPqfpd3H7g=\n-----END PUBLIC KEY-----\n"
+}

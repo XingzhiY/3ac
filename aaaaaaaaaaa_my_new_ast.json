@@ -1,0 +1,167 @@
+{
+  "FileAST": {
+    "ext[0]": {
+      "FuncDef": {
+        "decl": {
+          "Decl": {
+            "name": "swap",
+            "quals": [],
+            "align": [],
+            "storage": [],
+            "funcspec": [],
+            "type": {
+              "FuncDecl": {
+                "args": {
+                  "ParamList": {
+                    "params[0]": {
+                      "Decl": {
+                        "name": "x",
+                        "quals": [],
+                        "align": [],
+                        "storage": [],
+                        "funcspec": [],
+                        "type": {
+                          "PtrDecl": {
+                            "quals": [],
+                            "type": {
+                              "TypeDecl": {
+                                "declname": "x",
+                                "quals": [],
+                                "align": null,
+                                "type": {
+                                  "IdentifierType": {
+                                    "names": [
+                                      "int"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "params[1]": {
+                      "Decl": {
+                        "name": "y",
+                        "quals": [],
+                        "align": [],
+                        "storage": [],
+                        "funcspec": [],
+                        "type": {
+                          "PtrDecl": {
+                            "quals": [],
+                            "type": {
+                              "TypeDecl": {
+                                "declname": "y",
+                                "quals": [],
+                                "align": null,
+                                "type": {
+                                  "IdentifierType": {
+                                    "names": [
+                                      "int"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "type": {
+                  "TypeDecl": {
+                    "declname": "swap",
+                    "quals": [],
+                    "align": null,
+                    "type": {
+                      "IdentifierType": {
+                        "names": [
+                          "void"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "body": {
+          "Compound": {
+            "block_items[0]": {
+              "Decl": {
+                "name": "t",
+                "quals": [],
+                "align": [],
+                "storage": [],
+                "funcspec": [],
+                "type": {
+                  "TypeDecl": {
+                    "declname": "t",
+                    "quals": [],
+                    "align": null,
+                    "type": {
+                      "IdentifierType": {
+                        "names": [
+                          "int"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[1]": {
+              "Assignment": {
+                "op": "=",
+                "lvalue": {
+                  "ID": {
+                    "name": "t"
+                  }
+                }
+              }
+            },
+            "block_items[2]": {
+              "Assignment": {
+                "op": "=",
+                "lvalue": {
+                  "UnaryOp": {
+                    "op": "*",
+                    "expr": {
+                      "ID": {
+                        "name": "x"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[3]": {
+              "Assignment": {
+                "op": "=",
+                "lvalue": {
+                  "UnaryOp": {
+                    "op": "*",
+                    "expr": {
+                      "ID": {
+                        "name": "y"
+                      }
+                    }
+                  }
+                },
+                "rvalue": {
+                  "ID": {
+                    "name": "t"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
