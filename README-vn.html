@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README-vn</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+</head>
+<body>
+<h1 id="generating-output-for-exercise-4">Generating Output for Exercise 4</h1>
+<p>The output for value numbering for this assignment uses a special schema, not ordinarily used by compilers.</p>
+<p>This schema has two purposes: 1) it constructs a proof for establishing equality of various values, 2) it allows me (and you) to check if the proof is actually a theorem.</p>
+<p>[All examples below are from Cooper and Turczon, page 420 onwards.]</p>
+<p>Consider the basic block:</p>
+<pre><code>a = b * c
+d = b
+e = d * c</code></pre>
+<p>With value numbering, this can be rewritten:</p>
+<pre><code>a = b * c
+d = b
+e = a</code></pre>
+<p>However, in Exercise 4, you must produce output that looks like this:</p>
+<pre><code>a = b * c;
+d = b;
+is_equal(a, d * c);
+e = a;</code></pre>
+<p>This states that your algorithm believed <code>d * c</code> was equal to <code>a</code>, and hence you produced <code>e = a</code>. Essentially, every time you detect that an expression has already been assigned a number, you should emit an <code>is_equal</code> call.</p>
+<p>For testing, one useful definition of <code>is_equal</code> is as follows:</p>
+<pre><code>void is_equal(int a, int b) {
+     assert(a == b);
+}</code></pre>
+<p>With this definition, simply compiling and running the program should tell you if your algorithm was correct.</p>
+<h2 id="another-example">Another example</h2>
+<p>For your reference, here is another complete example worked out:</p>
+<p>This is input (the file <code>lvn1.c</code>):</p>
+<pre><code>BB01:
+  b = 10;
+  c = b;
+  a = b + c;
+  d = a - c;
+  e = d &lt;&lt; 1;</code></pre>
+<p>Here is one possible output if the LVN algorithm does not perform <em>constant folding</em>:</p>
+<pre><code>BB01:
+  b = 10;               // 0 = 0
+  c = b;                // 0 = 0
+  is_equal(c, 10);
+  is_equal(b, 10);
+  a = 10 + 10;          // 1 = 0 + 0
+  is_equal(c, 10);
+  d = a - 10;           // 2 = 1 - 0
+  e = d &lt;&lt; 1;           // 4 = 2 &lt;&lt; 3</code></pre>
+<p>With constant folding (i.e. expressions containing constants are evaluated, see the textbook):</p>
+<pre><code>BB01:
+  b = 10;               // 0 = 0
+  c = b;                // 0 = 0
+  is_equal(c, 10);
+  is_equal(b, 10);
+  is_equal(10 + 10, 20);
+  a = 20;               // 1 = 1
+  is_equal(c, 10);
+  is_equal(a, 20);
+  is_equal(20 - 10, 10);
+  is_equal(10, 10);
+  d = 10;               // 0 = 0
+  is_equal(d, 10);
+  is_equal(10 &lt;&lt; 1, 20); // note 1 will be value numbered, but never used
+  e = 20;               // 1 = 1</code></pre>
+<p>For the constant folding case, you must emit an <code>is_equal</code> call additionally whenever you evaluate an expression, like <code>20 - 10</code>.</p>
+</body>
+</html>

@@ -1,0 +1,130 @@
+// CFG
+digraph {
+	BB000 [label="BB000{
+  char i;
+  int vol = 10;
+}
+"]
+	BB001 [label="BB001{
+  label0:
+  1;
+
+  if (1)
+    goto label2;
+}
+"]
+	BB002 [label="BB002{
+  goto label1;
+}
+"]
+	BB003 [label="BB003{
+  label2:
+  1;
+
+  int temp0;
+  temp0 = getc();
+  i = temp0;
+  int temp1;
+  temp1 = i == 'q';
+  if (temp1)
+    goto label3;
+}
+"]
+	BB004 [label="BB004{
+  goto label4;
+}
+"]
+	BB005 [label="BB005{
+  label3:
+  1;
+
+  goto label1;
+}
+"]
+	BB006 [label="BB006{
+  goto label5;
+}
+"]
+	BB007 [label="BB007{
+  label4:
+  1;
+
+}
+"]
+	BB008 [label="BB008{
+  label5:
+  1;
+
+  if (i == '+')
+    goto label7;
+}
+"]
+	BB009 [label="BB009{
+  if (i == '-')
+    goto label8;
+}
+"]
+	BB010 [label="BB010{
+  label7:
+  1;
+
+  int temp2;
+  temp2 = vol;
+  vol = vol + 1;
+  goto label6;
+}
+"]
+	BB011 [label="BB011{
+  label8:
+  1;
+
+  int temp3;
+  temp3 = vol;
+  vol = vol - 1;
+  goto label6;
+}
+"]
+	BB012 [label="BB012{
+  label9:
+  1;
+
+  int temp4;
+  temp4 = printf(\"unrecognized command: %c\n\", i);
+}
+"]
+	BB013 [label="BB013{
+  label6:
+  1;
+
+  goto label0;
+}
+"]
+	BB014 [label="BB014{
+  label1:
+  1;
+
+}
+"]
+	ENTRY
+	EXIT
+	BB000 -> BB001
+	BB001 -> BB002
+	BB001 -> BB003
+	BB003 -> BB004
+	BB003 -> BB005
+	BB007 -> BB008
+	BB008 -> BB009
+	BB008 -> BB010
+	BB009 -> BB011
+	BB009 -> BB010
+	BB012 -> BB013
+	BB002 -> BB014
+	BB004 -> BB007
+	BB005 -> BB014
+	BB006 -> BB008
+	BB010 -> BB013
+	BB011 -> BB013
+	BB013 -> BB001
+	ENTRY -> BB000
+	BB014 -> EXIT
+}
