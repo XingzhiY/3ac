@@ -34,7 +34,7 @@ def print_json_ast(ast):
     with open("aaaaaaaaaaa_my_bb_ast.json", 'w') as output_file:
         json.dump(ast_dict, output_file, indent=2)
 
-class bbGenerator(c_ast.NodeVisitor):
+class cfgGenerator(c_ast.NodeVisitor):
     def __init__(self):
         self.addr_dict={}
         self.goto_dict={}
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # 打印我的 ast 原始格式到文件,用来debug
     # print_json_ast(ast)
 
-    bbgenerator = bbGenerator()
+    bbgenerator = cfgGenerator()
     bb_ast = bbgenerator.visit(ast)
     bbnum=bbgenerator.get_bbnum()
 
