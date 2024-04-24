@@ -1,30 +1,29 @@
 int printf(const char *format, ...);
 
-void primefinder(int N, int *primes) {
-  int np = 0;
-  int is_prime = 0;
-  int i, j;
+void main(void) {
+  int a, b;
+  int x, y, z, c, d, e;
 
-  primes[0] = 2;
-  np++;
+  a = 10;
+  b = 47;
 
-  for(i = 3; i <= N; i++) {
-    is_prime = 1;
+  x = a + b;
+  y = a + b;
+  z = y - b;
 
-    for(j = 0; j < np && primes[j] * primes[j] <= i; j++) {
-      if(i % primes[j] == 0) {
-		is_prime = 0;
-		break;
-      }
-    }
+  c = a;
+  d = 0;
+  e = 0;
 
-    if(is_prime) {
-      primes[np] = i;
-      np++;
-    }
+  if(y > 50) {
+    c = x + z;
+    d = a << 1;
+    x = z;
+  } else {
+    c = y;
+    e = a + b;
+    y = e - b;
   }
 
-  for(i = 0; i < np; i++) {
-    printf("%d: %d\n", i, primes[i]);
-  }
+  printf("a:%d, b:%d, c:%d, d:%d, x:%d, y:%d, z:%d\n", a, b, c, d, x, y, z);
 }

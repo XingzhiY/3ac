@@ -1,0 +1,1078 @@
+{
+  "FileAST": {
+    "ext[0]": {
+      "Decl": {
+        "name": "printf",
+        "quals": [],
+        "align": [],
+        "storage": [],
+        "funcspec": [],
+        "type": {
+          "FuncDecl": {
+            "args": {
+              "ParamList": {
+                "params[0]": {
+                  "Decl": {
+                    "name": "format",
+                    "quals": [
+                      "const"
+                    ],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "PtrDecl": {
+                        "quals": [],
+                        "type": {
+                          "TypeDecl": {
+                            "declname": "format",
+                            "quals": [
+                              "const"
+                            ],
+                            "align": null,
+                            "type": {
+                              "IdentifierType": {
+                                "names": [
+                                  "char"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "params[1]": {
+                  "EllipsisParam": {}
+                }
+              }
+            },
+            "type": {
+              "TypeDecl": {
+                "declname": "printf",
+                "quals": [],
+                "align": null,
+                "type": {
+                  "IdentifierType": {
+                    "names": [
+                      "int"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ext[1]": {
+      "FuncDef": {
+        "decl": {
+          "Decl": {
+            "name": "main",
+            "quals": [],
+            "align": [],
+            "storage": [],
+            "funcspec": [],
+            "type": {
+              "FuncDecl": {
+                "args": {
+                  "ParamList": {
+                    "params[0]": {
+                      "Typename": {
+                        "name": null,
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "TypeDecl": {
+                            "declname": null,
+                            "quals": [],
+                            "align": null,
+                            "type": {
+                              "IdentifierType": {
+                                "names": [
+                                  "void"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "type": {
+                  "TypeDecl": {
+                    "declname": "main",
+                    "quals": [],
+                    "align": null,
+                    "type": {
+                      "IdentifierType": {
+                        "names": [
+                          "void"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "body": {
+          "Compound": {
+            "block_items[0]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Decl": {
+                    "name": "a",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "a",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "b",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "b",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Decl": {
+                    "name": "x",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "x",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[3]": {
+                  "Decl": {
+                    "name": "y",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "y",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[4]": {
+                  "Decl": {
+                    "name": "z",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "z",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[5]": {
+                  "Decl": {
+                    "name": "c",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "c",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[6]": {
+                  "Decl": {
+                    "name": "d",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "d",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[7]": {
+                  "Decl": {
+                    "name": "e",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "e",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[8]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "a"
+                      }
+                    },
+                    "rvalue": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "10"
+                      }
+                    }
+                  }
+                },
+                "block_items[9]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "b"
+                      }
+                    },
+                    "rvalue": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "47"
+                      }
+                    }
+                  }
+                },
+                "block_items[10]": {
+                  "Decl": {
+                    "name": "temp0",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp0",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[11]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp0"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "+",
+                        "left": {
+                          "ID": {
+                            "name": "a"
+                          }
+                        },
+                        "right": {
+                          "ID": {
+                            "name": "b"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[12]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "x"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp0"
+                      }
+                    }
+                  }
+                },
+                "block_items[13]": {
+                  "Decl": {
+                    "name": "temp1",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp1",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[14]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp1"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "+",
+                        "left": {
+                          "ID": {
+                            "name": "a"
+                          }
+                        },
+                        "right": {
+                          "ID": {
+                            "name": "b"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[15]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "y"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp1"
+                      }
+                    }
+                  }
+                },
+                "block_items[16]": {
+                  "Decl": {
+                    "name": "temp2",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp2",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[17]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp2"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "-",
+                        "left": {
+                          "ID": {
+                            "name": "y"
+                          }
+                        },
+                        "right": {
+                          "ID": {
+                            "name": "b"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[18]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "z"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp2"
+                      }
+                    }
+                  }
+                },
+                "block_items[19]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "c"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "a"
+                      }
+                    }
+                  }
+                },
+                "block_items[20]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "d"
+                      }
+                    },
+                    "rvalue": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "0"
+                      }
+                    }
+                  }
+                },
+                "block_items[21]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "e"
+                      }
+                    },
+                    "rvalue": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "0"
+                      }
+                    }
+                  }
+                },
+                "block_items[22]": {
+                  "Decl": {
+                    "name": "temp3",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp3",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[23]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp3"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": ">",
+                        "left": {
+                          "ID": {
+                            "name": "y"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "int",
+                            "value": "50"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[24]": {
+                  "If": {
+                    "cond": {
+                      "ID": {
+                        "name": "temp3"
+                      }
+                    },
+                    "iftrue": {
+                      "Goto": {
+                        "name": "label0"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[1]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Goto": {
+                    "name": "label1"
+                  }
+                }
+              }
+            },
+            "block_items[2]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label0",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "temp4",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp4",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp4"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "+",
+                        "left": {
+                          "ID": {
+                            "name": "x"
+                          }
+                        },
+                        "right": {
+                          "ID": {
+                            "name": "z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[3]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "c"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp4"
+                      }
+                    }
+                  }
+                },
+                "block_items[4]": {
+                  "Decl": {
+                    "name": "temp5",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp5",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[5]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp5"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "<<",
+                        "left": {
+                          "ID": {
+                            "name": "a"
+                          }
+                        },
+                        "right": {
+                          "Constant": {
+                            "type": "int",
+                            "value": "1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[6]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "d"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp5"
+                      }
+                    }
+                  }
+                },
+                "block_items[7]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "x"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "z"
+                      }
+                    }
+                  }
+                },
+                "block_items[8]": {
+                  "Goto": {
+                    "name": "label2"
+                  }
+                }
+              }
+            },
+            "block_items[3]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label1",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "c"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "y"
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Decl": {
+                    "name": "temp6",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp6",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[3]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp6"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "+",
+                        "left": {
+                          "ID": {
+                            "name": "a"
+                          }
+                        },
+                        "right": {
+                          "ID": {
+                            "name": "b"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[4]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "e"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp6"
+                      }
+                    }
+                  }
+                },
+                "block_items[5]": {
+                  "Decl": {
+                    "name": "temp7",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp7",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[6]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp7"
+                      }
+                    },
+                    "rvalue": {
+                      "BinaryOp": {
+                        "op": "-",
+                        "left": {
+                          "ID": {
+                            "name": "e"
+                          }
+                        },
+                        "right": {
+                          "ID": {
+                            "name": "b"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[7]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "y"
+                      }
+                    },
+                    "rvalue": {
+                      "ID": {
+                        "name": "temp7"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "block_items[4]": {
+              "Compound": {
+                "block_items[0]": {
+                  "Label": {
+                    "name": "label2",
+                    "stmt": {
+                      "Constant": {
+                        "type": "int",
+                        "value": "1"
+                      }
+                    }
+                  }
+                },
+                "block_items[1]": {
+                  "Decl": {
+                    "name": "temp8",
+                    "quals": [],
+                    "align": [],
+                    "storage": [],
+                    "funcspec": [],
+                    "type": {
+                      "TypeDecl": {
+                        "declname": "temp8",
+                        "quals": [],
+                        "align": null,
+                        "type": {
+                          "IdentifierType": {
+                            "names": [
+                              "int"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[2]": {
+                  "Assignment": {
+                    "op": "=",
+                    "lvalue": {
+                      "ID": {
+                        "name": "temp8"
+                      }
+                    },
+                    "rvalue": {
+                      "FuncCall": {
+                        "name": {
+                          "ID": {
+                            "name": "printf"
+                          }
+                        },
+                        "args": {
+                          "ExprList": {
+                            "exprs[0]": {
+                              "Constant": {
+                                "type": "string",
+                                "value": "\"a:%d, b:%d, c:%d, d:%d, x:%d, y:%d, z:%d\\n\""
+                              }
+                            },
+                            "exprs[1]": {
+                              "ID": {
+                                "name": "a"
+                              }
+                            },
+                            "exprs[2]": {
+                              "ID": {
+                                "name": "b"
+                              }
+                            },
+                            "exprs[3]": {
+                              "ID": {
+                                "name": "c"
+                              }
+                            },
+                            "exprs[4]": {
+                              "ID": {
+                                "name": "d"
+                              }
+                            },
+                            "exprs[5]": {
+                              "ID": {
+                                "name": "x"
+                              }
+                            },
+                            "exprs[6]": {
+                              "ID": {
+                                "name": "y"
+                              }
+                            },
+                            "exprs[7]": {
+                              "ID": {
+                                "name": "z"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
