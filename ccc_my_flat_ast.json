@@ -271,14 +271,14 @@
             "block_items[7]": {
               "Decl": {
                 "name": "temp0",
-                "quals": null,
-                "align": null,
-                "storage": null,
-                "funcspec": null,
+                "quals": [],
+                "align": [],
+                "storage": [],
+                "funcspec": [],
                 "type": {
                   "TypeDecl": {
                     "declname": "temp0",
-                    "quals": null,
+                    "quals": [],
                     "align": null,
                     "type": {
                       "IdentifierType": {
@@ -334,14 +334,14 @@
             "block_items[10]": {
               "Decl": {
                 "name": "temp1",
-                "quals": null,
-                "align": null,
-                "storage": null,
-                "funcspec": null,
+                "quals": [],
+                "align": [],
+                "storage": [],
+                "funcspec": [],
                 "type": {
                   "TypeDecl": {
                     "declname": "temp1",
-                    "quals": null,
+                    "quals": [],
                     "align": null,
                     "type": {
                       "IdentifierType": {
@@ -397,14 +397,14 @@
             "block_items[13]": {
               "Decl": {
                 "name": "temp2",
-                "quals": null,
-                "align": null,
-                "storage": null,
-                "funcspec": null,
+                "quals": [],
+                "align": [],
+                "storage": [],
+                "funcspec": [],
                 "type": {
                   "TypeDecl": {
                     "declname": "temp2",
-                    "quals": null,
+                    "quals": [],
                     "align": null,
                     "type": {
                       "IdentifierType": {
@@ -461,14 +461,14 @@
             "block_items[16]": {
               "Decl": {
                 "name": "temp3",
-                "quals": null,
-                "align": null,
-                "storage": null,
-                "funcspec": null,
+                "quals": [],
+                "align": [],
+                "storage": [],
+                "funcspec": [],
                 "type": {
                   "TypeDecl": {
                     "declname": "temp3",
-                    "quals": null,
+                    "quals": [],
                     "align": null,
                     "type": {
                       "IdentifierType": {

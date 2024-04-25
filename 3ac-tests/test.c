@@ -1,29 +1,14 @@
 int printf(const char *format, ...);
 
-void main(void) {
-  int a, b;
-  int x, y, z, c, d, e;
+int main(void){
+  int a, b, c, d, e;
 
-  a = 10;
-  b = 47;
+  b = 10;
 
-  x = a + b;
-  y = a + b;
-  z = y - b;
+  c = b;
+  a = b + c;
+  d = a - c;
+  e = d << 1;
 
-  c = a;
-  d = 0;
-  e = 0;
-
-  if(y > 50) {
-    c = x + z;
-    d = a << 1;
-    x = z;
-  } else {
-    c = y;
-    e = a + b;
-    y = e - b;
-  }
-
-  printf("a:%d, b:%d, c:%d, d:%d, x:%d, y:%d, z:%d\n", a, b, c, d, x, y, z);
+  printf("a:%d b:%d c:%d d:%d e:%d\n", a, b, c, d, e);
 }
