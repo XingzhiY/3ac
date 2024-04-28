@@ -287,14 +287,36 @@
                       }
                     },
                     "rvalue": {
-                      "Constant": {
-                        "type": "int",
-                        "value": "10"
+                      "ID": {
+                        "name": "b"
                       }
                     }
                   }
                 },
                 "block_items[8]": {
+                  "FuncCall": {
+                    "name": {
+                      "ID": {
+                        "name": "is_equal"
+                      }
+                    },
+                    "args": {
+                      "ExprList": {
+                        "exprs[0]": {
+                          "ID": {
+                            "name": "c"
+                          }
+                        },
+                        "exprs[1]": {
+                          "ID": {
+                            "name": "10"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[9]": {
                   "Decl": {
                     "name": "temp0",
                     "quals": [],
@@ -317,7 +339,7 @@
                     }
                   }
                 },
-                "block_items[9]": {
+                "block_items[10]": {
                   "FuncCall": {
                     "name": {
                       "ID": {
@@ -340,7 +362,7 @@
                     }
                   }
                 },
-                "block_items[10]": {
+                "block_items[11]": {
                   "FuncCall": {
                     "name": {
                       "ID": {
@@ -363,7 +385,7 @@
                     }
                   }
                 },
-                "block_items[11]": {
+                "block_items[12]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {
@@ -375,22 +397,20 @@
                       "BinaryOp": {
                         "op": "+",
                         "left": {
-                          "Constant": {
-                            "type": "int",
-                            "value": "10"
+                          "ID": {
+                            "name": "b"
                           }
                         },
                         "right": {
-                          "Constant": {
-                            "type": "int",
-                            "value": "10"
+                          "ID": {
+                            "name": "c"
                           }
                         }
                       }
                     }
                   }
                 },
-                "block_items[12]": {
+                "block_items[13]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {
@@ -405,7 +425,30 @@
                     }
                   }
                 },
-                "block_items[13]": {
+                "block_items[14]": {
+                  "FuncCall": {
+                    "name": {
+                      "ID": {
+                        "name": "is_equal"
+                      }
+                    },
+                    "args": {
+                      "ExprList": {
+                        "exprs[0]": {
+                          "ID": {
+                            "name": "a"
+                          }
+                        },
+                        "exprs[1]": {
+                          "ID": {
+                            "name": "temp0"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[15]": {
                   "Decl": {
                     "name": "temp1",
                     "quals": [],
@@ -428,7 +471,7 @@
                     }
                   }
                 },
-                "block_items[14]": {
+                "block_items[16]": {
                   "FuncCall": {
                     "name": {
                       "ID": {
@@ -451,7 +494,7 @@
                     }
                   }
                 },
-                "block_items[15]": {
+                "block_items[17]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {
@@ -468,16 +511,15 @@
                           }
                         },
                         "right": {
-                          "Constant": {
-                            "type": "int",
-                            "value": "10"
+                          "ID": {
+                            "name": "c"
                           }
                         }
                       }
                     }
                   }
                 },
-                "block_items[16]": {
+                "block_items[18]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {
@@ -492,7 +534,30 @@
                     }
                   }
                 },
-                "block_items[17]": {
+                "block_items[19]": {
+                  "FuncCall": {
+                    "name": {
+                      "ID": {
+                        "name": "is_equal"
+                      }
+                    },
+                    "args": {
+                      "ExprList": {
+                        "exprs[0]": {
+                          "ID": {
+                            "name": "d"
+                          }
+                        },
+                        "exprs[1]": {
+                          "ID": {
+                            "name": "temp1"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[20]": {
                   "Decl": {
                     "name": "temp2",
                     "quals": [],
@@ -515,7 +580,7 @@
                     }
                   }
                 },
-                "block_items[18]": {
+                "block_items[21]": {
                   "FuncCall": {
                     "name": {
                       "ID": {
@@ -538,7 +603,7 @@
                     }
                   }
                 },
-                "block_items[19]": {
+                "block_items[22]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {
@@ -564,7 +629,7 @@
                     }
                   }
                 },
-                "block_items[20]": {
+                "block_items[23]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {
@@ -579,7 +644,30 @@
                     }
                   }
                 },
-                "block_items[21]": {
+                "block_items[24]": {
+                  "FuncCall": {
+                    "name": {
+                      "ID": {
+                        "name": "is_equal"
+                      }
+                    },
+                    "args": {
+                      "ExprList": {
+                        "exprs[0]": {
+                          "ID": {
+                            "name": "e"
+                          }
+                        },
+                        "exprs[1]": {
+                          "ID": {
+                            "name": "temp2"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "block_items[25]": {
                   "Decl": {
                     "name": "temp3",
                     "quals": [],
@@ -602,7 +690,7 @@
                     }
                   }
                 },
-                "block_items[22]": {
+                "block_items[26]": {
                   "Assignment": {
                     "op": "=",
                     "lvalue": {

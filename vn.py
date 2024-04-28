@@ -153,7 +153,9 @@ class vnGenerator(c_ast.NodeVisitor):
 
 
             self.expr_num_dict[left_id]=self.get_num(node.rvalue)
+
             self.temp_statements.append(node)
+            self.assert_equal(left_id, self.get_name(node.rvalue))
             return
 
 
@@ -165,11 +167,15 @@ class vnGenerator(c_ast.NodeVisitor):
                 if right_id_num in self.num_const_dict:
                     right_id_const=self.num_const_dict[right_id_num]
                     self.expr_num_dict[left_id] = right_id_num
-                    self.assert_equal(right_id_name,right_id_const)
-                    self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=Constant(type="int",value=right_id_const)))
+
+                    # self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=Constant(type="int",value=right_id_const)))
+                    self.temp_statements.append(node)
+                    self.assert_equal(left_id, right_id_const)
                     return
             self.expr_num_dict[left_id] = self.get_num(node.rvalue)
+
             self.temp_statements.append(node)
+            self.assert_equal(left_id, self.get_name(node.rvalue))
             return
 
         #右边是 binary operation 的情况
@@ -186,15 +192,19 @@ class vnGenerator(c_ast.NodeVisitor):
             if expr_num in self.num_const_dict:
                 self.expr_num_dict[left_id] = expr_num
                 right_const=Constant(type="int",value=self.num_const_dict[expr_num])
-                self.assert_equal(expr,right_const)
-                self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=right_const))
+
+                # self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=right_const))
+                self.temp_statements.append(node)
+                self.assert_equal(expr, right_const)
                 return
             # 如果右边能找到对应的id
             if expr_num in self.num_var_dict:
                 self.expr_num_dict[left_id] = expr_num
                 right_id=ID(name=self.num_var_dict[expr_num])
+
+                # self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=right_id))
+                self.temp_statements.append(node)
                 self.assert_equal(expr, right_id)
-                self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=right_id))
                 return
             #没有的话，看一下能不能把单个替换成 const
             # 原版的 boundary operation 的左操作数
@@ -203,12 +213,15 @@ class vnGenerator(c_ast.NodeVisitor):
             b_rvalue = node.rvalue.right
             # 如果左边或者右边能找到对应的 const，那么替换一下
             if b_left in self.num_const_dict:
-                self.assert_equal(self.get_name(node.rvalue.left), self.num_const_dict[b_left])
                 b_lvalue=Constant(type="int",value=self.num_const_dict[b_left])
+                self.assert_equal(self.get_name(node.rvalue.left), self.num_const_dict[b_left])
+
             if b_right in self.num_const_dict:
-                self.assert_equal(self.get_name(node.rvalue.right), self.num_const_dict[b_right])
                 b_rvalue=Constant(type="int",value=self.num_const_dict[b_right])
-            self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=BinaryOp(left=b_lvalue, op=node.rvalue.op, right=b_rvalue)))
+                self.assert_equal(self.get_name(node.rvalue.right), self.num_const_dict[b_right])
+
+            # self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=BinaryOp(left=b_lvalue, op=node.rvalue.op, right=b_rvalue)))
+            self.temp_statements.append(node)
             # 找不到现成的，左边需要一个新的 number
             self.expr_num_dict[left_id] = self.get_num(left_id)
             return
@@ -339,6 +352,7 @@ def main(input_path, output_path):
     ast_str = new_generator.visit(vn_ast)
     with open(output_path, 'w') as file:
         file.write(ast_str)  # 将AST字符串写入文件
+        # file.write("int printf(const char *format, ...); int main(void) { { int a; int b; int c; int d; int e; b = 10; is_equal(b, b); c = b; int temp0; is_equal(b, b); is_equal(c, b); temp0 = b + b; a = temp0; int temp1; is_equal(c, b); temp1 = a - b; d = temp1; int temp2; is_equal(1, 1); temp2 = d << 1; e = temp2; int temp3; temp3 = printf(\"a:%d b:%d c:%d d:%d e:%d\n\", a, b, c, d, e); } }")  # 将AST字符串写入文件
 
 
 if __name__ == '__main__':
