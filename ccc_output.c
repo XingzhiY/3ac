@@ -8,12 +8,12 @@ int main(void)
     int d;
     int e;
     b = 10;
-    c = b;
+    c = 10;
     int temp0;
-    temp0 = b + c;
+    temp0 = 10 + 10;
     a = temp0;
     int temp1;
-    temp1 = a - c;
+    temp1 = a - 10;
     d = temp1;
     int temp2;
     temp2 = d << 1;

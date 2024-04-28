@@ -153,12 +153,23 @@ class vnGenerator(c_ast.NodeVisitor):
 
 
             self.expr_num_dict[left_id]=self.get_num(node.rvalue)
+            self.temp_statements.append(node)
+            return
 
 
         #右边是 id 的情况
         elif isinstance(node.rvalue, c_ast.ID):
-
+            right_id_name=node.rvalue.name
+            if right_id_name in self.expr_num_dict:
+                right_id_num=self.expr_num_dict[right_id_name]
+                if right_id_num in self.num_const_dict:
+                    right_id_const=self.num_const_dict[right_id_num]
+                    self.expr_num_dict[left_id] = right_id_num
+                    self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=Constant(type="int",value=right_id_const)))
+                    return
             self.expr_num_dict[left_id] = self.get_num(node.rvalue)
+            self.temp_statements.append(node)
+            return
 
         #右边是 binary operation 的情况
         elif isinstance(node.rvalue, c_ast.BinaryOp):
@@ -169,46 +180,65 @@ class vnGenerator(c_ast.NodeVisitor):
             #把他们俩和op加起来去查找一下有没有对应的 number
             expr=b_left+b_op+b_right
             expr_num=self.get_num(expr)
-            #有的话就把右边替换成对应的 const，或者id
+
+            # 如果右边能直接找到对应的const
             if expr_num in self.num_const_dict:
-                expr_num=Constant(type="int",value=self.num_const_dict[expr_num])
-            elif
+                self.expr_num_dict[left_id] = expr_num
+                right_const=Constant(type="int",value=self.num_const_dict[expr_num])
+                self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=right_const))
+                return
+            # 如果右边能找到对应的id
+            if expr_num in self.num_var_dict:
+                self.expr_num_dict[left_id] = expr_num
+                right_id=ID(name=self.num_var_dict[expr_num])
+                self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=right_id))
+                return
             #没有的话，看一下能不能把单个替换成 const
-        #给左边一个新的 number，或者是从右边获取的 number
-        self.temp_statements.append()
-        # modified_rvalue = self.visit(node.rvalue)
-        # modified_lvalue = self.visit(node.lvalue)
-        modified_node = Assignment(node.op, node.lvalue, modified_rvalue, node.coord)
-        # 返回修改后的节点
-        self.temp_statements.append(modified_node)
-        # return modified_node
+            # 原版的 boundary operation 的左操作数
+            b_lvalue=node.rvalue.left
+            # 原版的 binary operation 的右操作数
+            b_rvalue = node.rvalue.right
+            # 如果左边或者右边能找到对应的 const，那么替换一下
+            if b_left in self.num_const_dict:
+                b_lvalue=Constant(type="int",value=self.num_const_dict[b_left])
+            if b_right in self.num_const_dict:
+                b_rvalue=Constant(type="int",value=self.num_const_dict[b_right])
+            self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=BinaryOp(left=b_lvalue, op=node.rvalue.op, right=b_rvalue)))
+            # 找不到现成的，左边需要一个新的 number
+            self.expr_num_dict[left_id] = self.get_num(left_id)
+            return
+        #     做不了任何优化
+        self.expr_num_dict[left_id] = self.get_num(left_id)
+        #     原版直接塞进去
+        self.temp_statements.append(node)
+        return
 
     def get_num(self,node):
         if isinstance(node,c_ast.ID):
             # 右边有没有出现过？
-            right_id = str(node.name)
+            name = str(node.name)
             # 如果出现过，那左边打上同样的编号
-            if right_id in self.expr_num_dict:
-                return self.expr_num_dict[right_id]
+            if name in self.expr_num_dict:
+                return self.expr_num_dict[name]
             # 如果右边没有出现过，那右边赋予一个新的编号,左边打上同样的编号
             else:
                 str_num = str(self.num)
-                self.expr_num_dict[right_id] = str_num
-                self.num_var_dict[str_num] = right_id
+                self.expr_num_dict[name] = str_num
+                self.num_var_dict[str_num] = name
                 self.num += 1
                 return str_num
-        elif isinstance(node.rvalue, c_ast.Constant):
+        elif isinstance(node, c_ast.Constant):
 
             #右边有没有出现过？
-            right_value = str(node.rvalue.value)
+            value = str(node.value)
             # 如果出现过，那左边打上同样的编号
-            if right_value in self.expr_num_dict:
-                return self.expr_num_dict[right_value]
+            if value in self.expr_num_dict:
+                return self.expr_num_dict[value]
             #如果右边没有出现过，那右边赋予一个新的编号,左边打上同样的编号
             else:
                 str_num=str(self.num)
-                self.expr_num_dict[right_value]=str_num
-                self.num_const_dict[str_num]=right_value
+                self.expr_num_dict[value]=str_num
+                self.num_const_dict[str_num]=value
                 self.num+=1
                 return str_num
         elif isinstance(node,str):

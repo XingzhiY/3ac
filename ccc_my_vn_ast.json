@@ -264,8 +264,9 @@
                       }
                     },
                     "rvalue": {
-                      "ID": {
-                        "name": "b"
+                      "Constant": {
+                        "type": "int",
+                        "value": "10"
                       }
                     }
                   }
@@ -305,13 +306,15 @@
                       "BinaryOp": {
                         "op": "+",
                         "left": {
-                          "ID": {
-                            "name": "b"
+                          "Constant": {
+                            "type": "int",
+                            "value": "10"
                           }
                         },
                         "right": {
-                          "ID": {
-                            "name": "c"
+                          "Constant": {
+                            "type": "int",
+                            "value": "10"
                           }
                         }
                       }
@@ -373,8 +376,9 @@
                           }
                         },
                         "right": {
-                          "ID": {
-                            "name": "c"
+                          "Constant": {
+                            "type": "int",
+                            "value": "10"
                           }
                         }
                       }
