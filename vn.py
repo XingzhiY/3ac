@@ -165,6 +165,7 @@ class vnGenerator(c_ast.NodeVisitor):
                 if right_id_num in self.num_const_dict:
                     right_id_const=self.num_const_dict[right_id_num]
                     self.expr_num_dict[left_id] = right_id_num
+                    self.assert_equal(right_id_name,right_id_const)
                     self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=Constant(type="int",value=right_id_const)))
                     return
             self.expr_num_dict[left_id] = self.get_num(node.rvalue)
@@ -185,12 +186,14 @@ class vnGenerator(c_ast.NodeVisitor):
             if expr_num in self.num_const_dict:
                 self.expr_num_dict[left_id] = expr_num
                 right_const=Constant(type="int",value=self.num_const_dict[expr_num])
+                self.assert_equal(expr,right_const)
                 self.temp_statements.append(Assignment(op="=",lvalue=node.lvalue,rvalue=right_const))
                 return
             # 如果右边能找到对应的id
             if expr_num in self.num_var_dict:
                 self.expr_num_dict[left_id] = expr_num
                 right_id=ID(name=self.num_var_dict[expr_num])
+                self.assert_equal(expr, right_id)
                 self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=right_id))
                 return
             #没有的话，看一下能不能把单个替换成 const
@@ -200,8 +203,10 @@ class vnGenerator(c_ast.NodeVisitor):
             b_rvalue = node.rvalue.right
             # 如果左边或者右边能找到对应的 const，那么替换一下
             if b_left in self.num_const_dict:
+                self.assert_equal(self.get_name(node.rvalue.left), self.num_const_dict[b_left])
                 b_lvalue=Constant(type="int",value=self.num_const_dict[b_left])
             if b_right in self.num_const_dict:
+                self.assert_equal(self.get_name(node.rvalue.right), self.num_const_dict[b_right])
                 b_rvalue=Constant(type="int",value=self.num_const_dict[b_right])
             self.temp_statements.append(Assignment(op="=", lvalue=node.lvalue, rvalue=BinaryOp(left=b_lvalue, op=node.rvalue.op, right=b_rvalue)))
             # 找不到现成的，左边需要一个新的 number
@@ -252,7 +257,18 @@ class vnGenerator(c_ast.NodeVisitor):
                 return str_num
         print("errorrrrr")
         return "-1"
+    def get_name(self,node):
+        if isinstance(node,c_ast.ID):
+            # 右边有没有出现过？
+            return node.name
+        elif isinstance(node, c_ast.Constant):
 
+            return str(node.value)
+
+        return "get wrong name"
+
+    def assert_equal(self,left,right):
+        self.temp_statements.append(FuncCall(name=ID(name="is_equal"),args=c_ast.ExprList(exprs=[ID(name=left),ID(name=right)])))
     # def visit_BinaryOp(self, node):
     #     right_node = self.visit(node.right)
     #     left_node = self.visit(node.left)
