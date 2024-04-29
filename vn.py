@@ -282,35 +282,65 @@ class vnGenerator(c_ast.NodeVisitor):
 
     def assert_equal(self,left,right):
         self.temp_statements.append(FuncCall(name=ID(name="is_equal"),args=c_ast.ExprList(exprs=[ID(name=left),ID(name=right)])))
-    # def visit_BinaryOp(self, node):
-    #     right_node = self.visit(node.right)
-    #     left_node = self.visit(node.left)
-    #
-    #     binary_op = BinaryOp(op=node.op, left=left_node, right=right_node)
-    #     return binary_op
 
-    # def visit_FuncCall(self, node):
-    #
-    #     return node
-    #
-    # def visit_ID(self, node):
-    #     # return node.name
-    #     id = node.name
-    #     if id not in self.expr_num_dict:
-    #         self.expr_num_dict[id] = str(self.num)
-    #         self.num_var_dict[str(self.num)] = id
-    #         self.num += 1
-    #     return node
-    #
-    # def visit_Constant(self, node):
-    #     # 打印Constant节点的类型和值
-    #     # return node.value
-    #     value = str(node.value)
-    #     if value not in self.expr_num_dict:
-    #         self.expr_num_dict[value] = str(self.num)
-    #         self.num_cont_dict[str(self.num)] = value
-    #         self.num += 1
-    #     return node
+
+class flatGenerator(c_ast.NodeVisitor):
+    def __init__(self):
+        self.list = []
+        self.bb_num = 0
+
+        self.flat_list=[]
+
+        # 常量变量表达式 map 到编号的表
+        self.expr_num_dict = dict()
+
+        # 编号到变量的地方
+        self.num_var_dict = dict()
+        # 编号到常量的表
+        self.num_const_dict = dict()
+        # 编号计数器
+        self.num = 0
+        # 每个block暂存的statement
+        self.temp_statements = []
+
+    def reset(self):
+        # 常量变量表达式 map 到编号的表
+        self.expr_num_dict = dict()
+
+        # 编号到变量的地方
+        self.num_var_dict = dict()
+        # 编号到常量的表
+        self.num_const_dict = dict()
+        # 编号计数器
+        self.num = 0
+        # 每个block暂存的statement
+        self.temp_statements = []
+
+
+
+    def visit_FileAST(self, node):
+        out = []
+        for i in node:
+            if isinstance(i, Decl):
+                out.append(i)
+                print("declare bug 1")
+            else:
+                out.append(self.visit(i))
+            # self.reset()
+            # print("@@@@@@@@@@@@@@@@@@@@")
+        return FileAST(out)
+
+    def visit_FuncDef(self, node):
+        block_list = node.body.block_items  # Assignment, Decl...
+
+        for block in block_list:
+            for item in block.block_items:
+                self.flat_list.append(item)
+        new_body = c_ast.Compound(block_items=self.flat_list)
+        # return node
+        return c_ast.FuncDef(decl=node.decl, body=new_body, param_decls=node.param_decls)
+
+
 
 
 def main(input_path, output_path):
@@ -346,10 +376,14 @@ def main(input_path, output_path):
     ast_dict = ast_to_dict(vn_ast)
     with open("ccc_my_vn_ast.json", 'w') as output_file:
         json.dump(ast_dict, output_file, indent=2)
+
+    # 用flat generator去把vn ast外框去掉
+    flatgenerator = flatGenerator()
+    flat_ast = flatgenerator.visit(vn_ast)
     # 打印AST
     new_generator = c_generator.CGenerator()
-    print(new_generator.visit(vn_ast))
-    ast_str = new_generator.visit(vn_ast)
+    print(new_generator.visit(flat_ast))
+    ast_str = new_generator.visit(flat_ast)
     with open(output_path, 'w') as file:
         file.write(ast_str)  # 将AST字符串写入文件
         # file.write("int printf(const char *format, ...); int main(void) { { int a; int b; int c; int d; int e; b = 10; is_equal(b, b); c = b; int temp0; is_equal(b, b); is_equal(c, b); temp0 = b + b; a = temp0; int temp1; is_equal(c, b); temp1 = a - b; d = temp1; int temp2; is_equal(1, 1); temp2 = d << 1; e = temp2; int temp3; temp3 = printf(\"a:%d b:%d c:%d d:%d e:%d\n\", a, b, c, d, e); } }")  # 将AST字符串写入文件
