@@ -34,7 +34,7 @@ def print_json_ast(ast):
     with open("aaaaaaaaaaa_my_bb_ast.json", 'w') as output_file:
         json.dump(ast_dict, output_file, indent=2)
 
-class cfgGenerator(c_ast.NodeVisitor):
+class bbGenerator(c_ast.NodeVisitor):
     def __init__(self):
         self.addr_dict={}
         self.goto_dict={}
@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # 打印我的 ast 原始格式到文件,用来debug
     # print_json_ast(ast)
 
-    bbgenerator = cfgGenerator()
+    bbgenerator = bbGenerator()
     bb_ast = bbgenerator.visit(ast)
     bbnum=bbgenerator.get_bbnum()
 
@@ -174,19 +174,8 @@ if __name__ == '__main__':
     dot = Digraph(comment='CFG')
 
     # 画node
-
-
-    cgenerator = c_generator.CGenerator()
-    if (isinstance(bb_ast.ext[0], c_ast.Decl)):
-        for i in range(bbnum):
-            dot.node("BB%03d" % i, ("BB%03d" % i) + cgenerator.visit(bb_ast.ext[1].body.block_items[i]))
-            # nodes.append("BB%03d" % i)
-    else:
-        for i in range(bbnum):
-            dot.node("BB%03d" % i, ("BB%03d" % i) + cgenerator.visit(bb_ast.ext[0].body.block_items[i]))
-            # nodes.append("BB%03d" % i)
-
-
+    for i in range(bbnum):
+        dot.node("BB%03d" % i)
     dot.node("ENTRY")
     dot.node("EXIT")
 
